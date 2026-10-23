@@ -1,0 +1,11 @@
+{
+  "Model": "Random Forest Regressor",
+  "Forecast Horizon": "24-Hour Day-Ahead",
+  "MAE (MW)": 5364.95,
+  "RMSE (MW)": 7527.91,
+  "R2": 0.722,
+  "MAPE (%)": 2.7,
+  "Training Time (s)": 0.932,
+  "Test Period": "2025-03-01 00:00:00 to 2025-06-24 23:00:00",
+  "Model Configuration": "n_estimators=100, max_depth=16, min_samples_leaf=5"
+}

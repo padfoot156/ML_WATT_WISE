@@ -1,0 +1,11 @@
+Algorithm,Feature Representation,Cluster Count,Silhouette Score,Davies-Bouldin Index,Cluster Interpretation,Limitations
+K-Means,24-Hour Standardized Diurnal Shape,2,0.3844,1.0056,Partitions daily load into 2 diurnal profile regimes,Assumes spherical clusters; sensitive to initialization
+K-Means,24-Hour Standardized Diurnal Shape,3,0.3481,1.0135,Partitions daily load into 3 diurnal profile regimes,Assumes spherical clusters; sensitive to initialization
+K-Means,24-Hour Standardized Diurnal Shape,4,0.3608,0.8937,Partitions daily load into 4 diurnal profile regimes,Assumes spherical clusters; sensitive to initialization
+K-Means,24-Hour Standardized Diurnal Shape,5,0.3254,0.9441,Partitions daily load into 5 diurnal profile regimes,Assumes spherical clusters; sensitive to initialization
+K-Means,24-Hour Standardized Diurnal Shape,6,0.3303,0.9526,Partitions daily load into 6 diurnal profile regimes,Assumes spherical clusters; sensitive to initialization
+Hierarchical (Ward),24-Hour Standardized Diurnal Shape,2,0.3881,0.9968,Dendrogram-based hierarchical taxonomy into 2 profile regimes,Computationally quadratic with number of days; non-probabilistic
+Hierarchical (Ward),24-Hour Standardized Diurnal Shape,3,0.324,1.1219,Dendrogram-based hierarchical taxonomy into 3 profile regimes,Computationally quadratic with number of days; non-probabilistic
+Hierarchical (Ward),24-Hour Standardized Diurnal Shape,4,0.3071,1.1821,Dendrogram-based hierarchical taxonomy into 4 profile regimes,Computationally quadratic with number of days; non-probabilistic
+Hierarchical (Ward),24-Hour Standardized Diurnal Shape,5,0.3286,0.9617,Dendrogram-based hierarchical taxonomy into 5 profile regimes,Computationally quadratic with number of days; non-probabilistic
+Hierarchical (Ward),24-Hour Standardized Diurnal Shape,6,0.2912,1.0703,Dendrogram-based hierarchical taxonomy into 6 profile regimes,Computationally quadratic with number of days; non-probabilistic

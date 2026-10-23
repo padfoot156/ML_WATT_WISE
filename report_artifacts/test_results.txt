@@ -1,0 +1,34 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.3, pytest-9.1.1, pluggy-1.7.0
+rootdir: C:\Users\Asus\OneDrive\Desktop\ML_LA]
+plugins: anyio-4.15.1, hypothesis-6.170.8, cov-7.1.0, html-4.2.0, metadata-3.1.1
+collected 12 items
+
+tests/test_api_and_models.py::test_health_check PASSED                   [  8%]
+tests/test_api_and_models.py::test_dashboard_html_contents PASSED        [ 16%]
+tests/test_api_and_models.py::test_hourly_dataset_frequency_and_integrity PASSED [ 25%]
+tests/test_api_and_models.py::test_mathematical_leakage_prevention PASSED [ 33%]
+tests/test_api_and_models.py::test_calendar_features_pipeline PASSED     [ 41%]
+tests/test_api_and_models.py::test_predict_random_forest PASSED          [ 50%]
+tests/test_api_and_models.py::test_predict_lstm PASSED                   [ 58%]
+tests/test_api_and_models.py::test_predict_seasonal_naive PASSED         [ 66%]
+tests/test_api_and_models.py::test_scenario_simulator_logic PASSED       [ 75%]
+tests/test_api_and_models.py::test_model_comparisons_and_clustering_endpoints PASSED [ 83%]
+tests/test_api_and_models.py::test_overview_kpis_and_festivals PASSED    [ 91%]
+tests/test_api_and_models.py::test_structured_interactive_chart_endpoints PASSED [100%]
+
+======================= 12 passed in 13.24s =======================
+
+Summary:
+- Test 1: Student verification & API health check (Pranav Kolhe & Amber Shukla) -> PASSED
+- Test 2: HTML UI template layout, academic header, tagline, and tabs -> PASSED
+- Test 3: Hourly dataset regularity (12,984 hours, exact 1-hour intervals, no negative generation) -> PASSED
+- Test 4: Mathematical zero-leakage proof for lag shifts (t-24, t-168, t-336) -> PASSED
+- Test 5: Indian calendar & movable festival tags (Diwali, Holi, Independence Day) -> PASSED
+- Test 6: Random Forest Regressor real-time inference -> PASSED
+- Test 7: PyTorch Deep LSTM sequence inference -> PASSED
+- Test 8: Seasonal-Naive baseline persistence evaluation -> PASSED
+- Test 9: Hypothetical expansion scenario simulation logic & monotonic growth checks -> PASSED
+- Test 10: Model laboratory benchmarks (Table A & Table B clustering profiles) -> PASSED
+- Test 11: Real-time overview KPIs and empirical festival divergence analysis -> PASSED
+- Test 12: Structured interactive chart endpoints (range filters, heatmap matrix, seasonal curves, feature importance, state series) -> PASSED

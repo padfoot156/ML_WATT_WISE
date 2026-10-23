@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  wattwise-ai:
+    build: .
+    container_name: wattwise-ai-app
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+      - PORT=8000
+    restart: unless-stopped
+    volumes:
+      - ./results:/app/results
+      - ./models:/app/models

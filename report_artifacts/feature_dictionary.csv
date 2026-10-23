@@ -1,0 +1,31 @@
+feature_name,type,description,leakage_status,unit
+datetime,Timestamp,Hourly observation timestamp in IST,Index variable (not feature),YYYY-MM-DD HH:MM:SS
+demand_mw,Float,National grid electricity demand target,Target variable (Y),MW
+solar_mw,Float,Total grid-connected solar power generated,Observed generation component,MW
+wind_mw,Float,Total grid-connected wind power generated,Observed generation component,MW
+hour_sin,Float,Sine encoding of hour of day: sin(2*pi*hour/24),Deterministic Calendar (No Leakage),"[-1, 1]"
+hour_cos,Float,Cosine encoding of hour of day: cos(2*pi*hour/24),Deterministic Calendar (No Leakage),"[-1, 1]"
+dayofweek_sin,Float,Sine encoding of weekday: sin(2*pi*dow/7),Deterministic Calendar (No Leakage),"[-1, 1]"
+dayofweek_cos,Float,Cosine encoding of weekday: cos(2*pi*dow/7),Deterministic Calendar (No Leakage),"[-1, 1]"
+month_sin,Float,Sine encoding of month: sin(2*pi*(m-1)/12),Deterministic Calendar (No Leakage),"[-1, 1]"
+month_cos,Float,Cosine encoding of month: cos(2*pi*(m-1)/12),Deterministic Calendar (No Leakage),"[-1, 1]"
+is_weekend,Binary,Indicator if day is Saturday or Sunday,Deterministic Calendar (No Leakage),"{0, 1}"
+season_code,Integer,"IMD meteorological season code (0=Winter, 1=Summer, 2=Monsoon, 3=Post-Monsoon)",Deterministic Calendar (No Leakage),"{0, 1, 2, 3}"
+is_festival,Binary,Indicator of major Indian festival on date,Deterministic Calendar (No Leakage),"{0, 1}"
+is_public_holiday,Binary,Gazetted or national public holiday indicator,Deterministic Calendar (No Leakage),"{0, 1}"
+is_pre_festival_window,Binary,Indicator for 1-2 days preceding a major festival,Deterministic Calendar (No Leakage),"{0, 1}"
+is_post_festival_window,Binary,Indicator for 1-2 days following a major festival,Deterministic Calendar (No Leakage),"{0, 1}"
+days_to_nearest_festival,Integer,Temporal distance in days to closest major festival,Deterministic Calendar (No Leakage),Days
+demand_lag_24,Float,National demand observed exactly 24 hours prior (t-24),Guaranteed Available at Forecast Time,MW
+demand_lag_48,Float,National demand observed 48 hours prior (t-48),Guaranteed Available at Forecast Time,MW
+demand_lag_168,Float,National demand observed 168 hours (1 week) prior (t-168),Guaranteed Available at Forecast Time,MW
+demand_lag_336,Float,National demand observed 336 hours (2 weeks) prior (t-336),Guaranteed Available at Forecast Time,MW
+demand_roll_mean_24h,Float,24h rolling mean demand shifted by 24h: shift(24).rolling(24).mean(),Strictly Shifted (No Leakage),MW
+demand_roll_std_24h,Float,24h rolling std demand shifted by 24h,Strictly Shifted (No Leakage),MW
+demand_roll_min_24h,Float,24h rolling minimum demand shifted by 24h,Strictly Shifted (No Leakage),MW
+demand_roll_max_24h,Float,24h rolling maximum demand shifted by 24h,Strictly Shifted (No Leakage),MW
+demand_roll_mean_7d,Float,7-day (168h) rolling mean demand shifted by 24h,Strictly Shifted (No Leakage),MW
+demand_roll_std_7d,Float,7-day (168h) rolling std demand shifted by 24h,Strictly Shifted (No Leakage),MW
+solar_lag_24,Float,Observed solar generation 24 hours prior (t-24),Guaranteed Available at Forecast Time,MW
+wind_lag_24,Float,Observed wind generation 24 hours prior (t-24),Guaranteed Available at Forecast Time,MW
+total_gen_lag_24,Float,Total generation observed 24 hours prior (t-24),Guaranteed Available at Forecast Time,MW

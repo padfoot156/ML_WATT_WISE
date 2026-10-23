@@ -1,0 +1,7 @@
+Dataset,Issue Identified,Action Taken,Rows Affected,Final Status
+National Hourly SCADA,"Metadata footer rows (Min, Max, Avg, Sum)",Filtered using regex pattern on Timestamp,6,Cleaned
+National Hourly SCADA,Solar sensor zero-drift (<0 at night),Clamped negative baseline values to 0.0 MW,1284,Cleaned
+National Hourly SCADA,Missing hourly steps in sequence,Continuous frequency audit (1h grid validation),0,Verified 100% complete
+National Hourly SCADA,Warmup period for 14-day lags (336 hours),Dropped warmup rows only for supervised training set,336,Zero NaNs in features
+Zenodo Maharashtra,ERA5 temperature in Kelvin,Converted to Celsius (K - 273.15),3954,Standardized to °C
+Zenodo Maharashtra,1 day weather timestamp misalignment,Inner join on date index,1,"Synchronized 3,954 days"

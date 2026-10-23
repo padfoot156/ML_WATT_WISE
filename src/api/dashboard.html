@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WattWise AI — Energy Demand. Supply. Intelligence.</title>
+  
+  <!-- Inter & JetBrains Mono Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Chart.js 4.4 -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            graphite: {
+              bg: '#0B0D10',
+              surface: '#12161B',
+              elevated: '#181E25',
+              border: '#252D36',
+              hover: '#1F2630'
+            },
+            energy: {
+              cyan: '#39D9F2',
+              green: '#65E6A5',
+              amber: '#F6C453',
+              coral: '#FF7B72',
+              muted: '#8D99A6',
+              text: '#F3F6F8'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #0B0D10;
+      color: #F3F6F8;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      overflow-x: hidden;
+    }
+    
+    /* Scrollbars */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0B0D10; }
+    ::-webkit-scrollbar-thumb { background: #252D36; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #39D9F2; }
+
+    /* Clean Card */
+    .tech-card {
+      background-color: #12161B;
+      border: 1px solid #252D36;
+      border-radius: 0.5rem;
+    }
+
+    /* Active Tab */
+    .tab-btn {
+      color: #8D99A6;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s ease;
+    }
+    .tab-btn:hover {
+      color: #F3F6F8;
+      border-color: #252D36;
+    }
+    .tab-btn.active {
+      color: #39D9F2;
+      border-color: #39D9F2;
+      font-weight: 600;
+    }
+
+    /* Range Pill Button */
+    .range-pill {
+      background: #181E25;
+      border: 1px solid #252D36;
+      color: #8D99A6;
+      padding: 0.2rem 0.6rem;
+      font-size: 0.75rem;
+      border-radius: 0.375rem;
+      transition: all 0.15s ease;
+    }
+    .range-pill:hover {
+      color: #F3F6F8;
+      border-color: #39D9F2;
+    }
+    .range-pill.active {
+      background: #252D36;
+      color: #39D9F2;
+      border-color: #39D9F2;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+  <!-- TOP HEADER / APPLICATION SHELL -->
+  <header class="border-b border-graphite-border bg-graphite-surface/95 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-4">
+      
+      <!-- Left: Brand & Tagline -->
+      <div class="flex items-center space-x-3.5">
+        <div class="w-8 h-8 rounded bg-gradient-to-br from-energy-cyan to-energy-green flex items-center justify-center font-bold text-graphite-bg text-base shadow-sm">
+          W
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="text-base font-bold tracking-tight text-energy-text">WattWise AI</span>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-graphite-elevated text-energy-cyan border border-graphite-border">v1.0 RESEARCH</span>
+          </div>
+          <p class="text-[11px] text-energy-muted font-medium tracking-wide">Energy Demand. Supply. Intelligence.</p>
+        </div>
+      </div>
+
+      <!-- Center: Active Section Title Context -->
+      <div class="hidden md:flex flex-col items-center text-center">
+        <span id="header-section-title" class="text-xs font-semibold text-energy-text uppercase tracking-wider">Energy Overview</span>
+        <span id="header-section-sub" class="text-[11px] text-energy-muted">Macro Grid Load, Clean Generation & Peak Demand Envelope</span>
+      </div>
+
+      <!-- Right: Dataset Status & Academic Credentials -->
+      <div class="flex items-center space-x-3 text-xs">
+        <div class="hidden lg:flex items-center space-x-2 bg-graphite-elevated border border-graphite-border px-2.5 py-1.5 rounded text-[11px]">
+          <span class="w-2 h-2 rounded-full bg-energy-green animate-pulse"></span>
+          <span class="text-energy-text font-medium">12,984 SCADA Hours</span>
+          <span class="text-energy-muted">| Grid-India & Zenodo</span>
+        </div>
+
+        <div class="bg-graphite-elevated border border-graphite-border px-3 py-1.5 rounded text-right">
+          <div class="text-[10px] font-medium text-energy-muted">Shri Ramdeobaba University, Nagpur</div>
+          <div class="text-[11px] font-mono text-energy-cyan font-medium">Pranav Kolhe (54) &bull; Amber Shukla (38)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NAVIGATION BAR -->
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 flex space-x-6 text-xs border-t border-graphite-border/60 overflow-x-auto">
+      <button onclick="switchTab('overview')" id="tab-overview" class="tab-btn py-2.5 px-1 active flex items-center gap-1.5 whitespace-nowrap">
+        <i data-lucide="activity" class="w-3.5 h-3.5"></i> Overview
+      </button>
+      <button onclick="switchTab('forecasting')" id="tab-forecasting" class="tab-btn py-2.5 px-1 flex items-center gap-1.5 whitespace-nowrap">
+        <i data-lucide="trending-up" class="w-3.5 h-3.5"></i> Forecasts
+      </button>
+      <button onclick="switchTab('renewables')" id="tab-renewables" class="tab-btn py-2.5 px-1 flex items-center gap-1.5 whitespace-nowrap">
+        <i data-lucide="sun" class="w-3.5 h-3.5"></i> Renewables
+      </button>
+      <button onclick="switchTab('festivals')" id="tab-festivals" class="tab-btn py-2.5 px-1 flex items-center gap-1.5 whitespace-nowrap">
+        <i data-lucide="calendar" class="w-3.5 h-3.5"></i> Festival Calendar
+      </button>
+      <button onclick="switchTab('expansion')" id="tab-expansion" class="tab-btn py-2.5 px-1 flex items-center gap-1.5 whitespace-nowrap">
+        <i data-lucide="sliders" class="w-3.5 h-3.5"></i> Expansion
+      </button>
+      <button onclick="switchTab('models')" id="tab-models" class="tab-btn py-2.5 px-1 flex items-center gap-1.5 whitespace-nowrap">
+        <i data-lucide="cpu" class="w-3.5 h-3.5"></i> Model Lab
+      </button>
+      <button onclick="switchTab('explorer')" id="tab-explorer" class="tab-btn py-2.5 px-1 flex items-center gap-1.5 whitespace-nowrap">
+        <i data-lucide="database" class="w-3.5 h-3.5"></i> Data Explorer
+      </button>
+    </nav>
+  </header>
+
+  <!-- MAIN VIEWPORT CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
+
+    <!-- ========================================== -->
+    <!-- SECTION 1: ENERGY OVERVIEW                  -->
+    <!-- ========================================== -->
+    <section id="section-overview" class="space-y-6">
+      <!-- Top 4 Compact Metric Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <div class="tech-card p-4">
+          <div class="flex items-center justify-between text-energy-muted text-xs font-medium">
+            <span>OBSERVED DEMAND</span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded bg-graphite-elevated border border-graphite-border font-mono text-energy-cyan">SCADA</span>
+          </div>
+          <div class="mt-2 flex items-baseline space-x-1.5">
+            <span id="kpi-demand" class="text-2xl font-bold font-mono tracking-tight text-energy-text">-- GW</span>
+            <span class="text-xs text-energy-muted font-normal">(<span id="kpi-demand-mw">--</span> MW)</span>
+          </div>
+          <div class="mt-2 pt-2 border-t border-graphite-border/60 flex items-center justify-between text-[11px] text-energy-muted">
+            <span>Timestamp:</span>
+            <span id="kpi-demand-time" class="font-mono text-energy-text truncate">--</span>
+          </div>
+        </div>
+
+        <div class="tech-card p-4">
+          <div class="flex items-center justify-between text-energy-muted text-xs font-medium">
+            <span>SOLAR GENERATION</span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded bg-graphite-elevated border border-graphite-border font-mono text-energy-amber">DAYLIGHT</span>
+          </div>
+          <div class="mt-2 flex items-baseline space-x-1.5">
+            <span id="kpi-solar" class="text-2xl font-bold font-mono tracking-tight text-energy-amber">-- GW</span>
+            <span class="text-xs text-energy-muted font-normal">observed</span>
+          </div>
+          <div class="mt-2 pt-2 border-t border-graphite-border/60 flex items-center justify-between text-[11px] text-energy-muted">
+            <span>Observed Peak:</span>
+            <span id="kpi-peak-solar" class="font-mono text-energy-text">-- GW</span>
+          </div>
+        </div>
+
+        <div class="tech-card p-4">
+          <div class="flex items-center justify-between text-energy-muted text-xs font-medium">
+            <span>WIND GENERATION</span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded bg-graphite-elevated border border-graphite-border font-mono text-energy-cyan">WIND PV</span>
+          </div>
+          <div class="mt-2 flex items-baseline space-x-1.5">
+            <span id="kpi-wind" class="text-2xl font-bold font-mono tracking-tight text-energy-cyan">-- GW</span>
+            <span class="text-xs text-energy-muted font-normal">observed</span>
+          </div>
+          <div class="mt-2 pt-2 border-t border-graphite-border/60 flex items-center justify-between text-[11px] text-energy-muted">
+            <span>Observed Peak:</span>
+            <span id="kpi-peak-wind" class="font-mono text-energy-text">-- GW</span>
+          </div>
+        </div>
+
+        <div class="tech-card p-4">
+          <div class="flex items-center justify-between text-energy-muted text-xs font-medium">
+            <span>ALL-TIME PEAK DEMAND</span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded bg-graphite-elevated border border-graphite-border font-mono text-energy-coral">RECORD</span>
+          </div>
+          <div class="mt-2 flex items-baseline space-x-1.5">
+            <span id="kpi-peak" class="text-2xl font-bold font-mono tracking-tight text-energy-coral">-- GW</span>
+            <span class="text-xs text-energy-muted font-normal">historical</span>
+          </div>
+          <div class="mt-2 pt-2 border-t border-graphite-border/60 flex items-center justify-between text-[11px] text-energy-muted">
+            <span>Timing:</span>
+            <span id="kpi-peak-date" class="font-mono text-energy-text truncate">--</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Interactive Historical Demand Chart with Range Filter -->
+      <div class="tech-card p-5">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div>
+            <h2 class="text-sm font-semibold text-energy-text">National Grid Electricity Demand & Renewable Generation</h2>
+            <p class="text-xs text-energy-muted mt-0.5">Continuous hourly telemetry observations from Grid-India NLDC</p>
+          </div>
+          
+          <!-- Range Selectors -->
+          <div class="flex items-center space-x-1 bg-graphite-surface p-1 rounded border border-graphite-border text-xs">
+            <button onclick="loadHistoricalChartRange('7D')" id="btn-range-7D" class="range-pill">7D</button>
+            <button onclick="loadHistoricalChartRange('30D')" id="btn-range-30D" class="range-pill active">30D</button>
+            <button onclick="loadHistoricalChartRange('90D')" id="btn-range-90D" class="range-pill">90D</button>
+            <button onclick="loadHistoricalChartRange('1Y')" id="btn-range-1Y" class="range-pill">1Y</button>
+            <button onclick="loadHistoricalChartRange('ALL')" id="btn-range-ALL" class="range-pill">All (1.5Y)</button>
+          </div>
+        </div>
+
+        <div class="w-full h-80 relative">
+          <div id="historicalChartLoader" class="absolute inset-0 flex items-center justify-center bg-graphite-surface/80 rounded z-10 hidden">
+            <div class="flex items-center space-x-2 text-xs text-energy-cyan font-mono">
+              <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>
+              <span>Loading telemetry series...</span>
+            </div>
+          </div>
+          <canvas id="overviewHistoricalChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Supporting 3 Evidence-Based Insights -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="overview-insights-container">
+        <!-- Rendered dynamically from real calculations -->
+      </div>
+
+      <!-- Two-Column Diagnostic Views: Heatmap & Seasonal Profiles -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Interactive Heatmap Matrix -->
+        <div class="tech-card p-5">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h3 class="text-sm font-semibold text-energy-text">Hourly & Weekly Load Matrix (Heatmap)</h3>
+              <p class="text-xs text-energy-muted">Diurnal intensity across days of week (average GW load)</p>
+            </div>
+            <span class="text-[10px] font-mono text-energy-muted bg-graphite-elevated px-2 py-1 rounded border border-graphite-border">7 Days &times; 24h</span>
+          </div>
+
+          <div class="w-full h-64 relative flex flex-col justify-center">
+            <div id="heatmapContainer" class="w-full h-full flex flex-col justify-between py-1"></div>
+            <div class="flex items-center justify-between text-[11px] text-energy-muted pt-2 border-t border-graphite-border/60">
+              <span id="heatmap-min">Low: -- GW</span>
+              <div class="w-32 h-2 rounded bg-gradient-to-r from-slate-800 via-sky-700 to-cyan-400"></div>
+              <span id="heatmap-max">High: -- GW</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Seasonal Profiles -->
+        <div class="tech-card p-5">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h3 class="text-sm font-semibold text-energy-text">IMD Meteorological Seasonal Diurnal Curves</h3>
+              <p class="text-xs text-energy-muted">Hour-by-hour demand profiles: Winter, Summer, Monsoon, Post-Monsoon</p>
+            </div>
+            <span class="text-[10px] font-mono text-energy-muted bg-graphite-elevated px-2 py-1 rounded border border-graphite-border">Unit: GW</span>
+          </div>
+          <div class="w-full h-64">
+            <canvas id="seasonalChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SECTION 2: FORECASTS                       -->
+    <!-- ========================================== -->
+    <section id="section-forecasting" class="space-y-6 hidden">
+      <!-- Main Visual Workspace -->
+      <div class="tech-card p-5">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <div>
+            <h2 class="text-sm font-semibold text-energy-text">24-Hour Day-Ahead Demand Forecasting Workspace</h2>
+            <p class="text-xs text-energy-muted mt-0.5">Chronological held-out evaluation: March 1 – June 24, 2025 (Zero Target Leakage)</p>
+          </div>
+          
+          <div class="flex items-center space-x-2 text-xs">
+            <span class="text-energy-muted">Top Benchmark Model:</span>
+            <span class="px-2 py-1 rounded bg-graphite-elevated border border-graphite-border text-energy-green font-mono text-[11px]">
+              Random Forest Regressor (RMSE: 7.53 GW &bull; $R^2$: 0.722)
+            </span>
+          </div>
+        </div>
+
+        <div class="w-full h-80">
+          <canvas id="forecastTestChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Live Forecast Inference Sandbox -->
+      <div class="tech-card p-5 space-y-4">
+        <div>
+          <h3 class="text-sm font-semibold text-energy-text">Live Operational Prediction Sandbox</h3>
+          <p class="text-xs text-energy-muted mt-0.5">Select a trained model and simulate day-ahead dispatch predictions given historical lag states</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 text-xs">
+          <div>
+            <label class="text-energy-muted block mb-1 font-medium">Model Architecture</label>
+            <select id="pred-model" class="w-full bg-graphite-elevated border border-graphite-border rounded p-2 text-xs text-energy-text focus:outline-none focus:border-energy-cyan">
+              <option value="random_forest">Random Forest Regressor (Best RMSE)</option>
+              <option value="lstm">PyTorch Deep LSTM Sequence Model</option>
+              <option value="gradient_boosting">Gradient Boosting Regressor</option>
+              <option value="ridge">Ridge Regression (L2 Regularized)</option>
+              <option value="decision_tree">Decision Tree Regressor</option>
+              <option value="seasonal_naive">Seasonal-Naive Baseline (Lag-24)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="text-energy-muted block mb-1 font-medium">Target Hour of Day (0–23 IST)</label>
+            <input type="number" id="pred-hour" value="14" min="0" max="23" class="w-full bg-graphite-elevated border border-graphite-border rounded p-2 text-xs text-energy-text focus:outline-none focus:border-energy-cyan font-mono">
+          </div>
+
+          <div>
+            <label class="text-energy-muted block mb-1 font-medium">Demand 24h Prior (GW)</label>
+            <input type="number" id="pred-lag24" value="195.0" step="0.5" class="w-full bg-graphite-elevated border border-graphite-border rounded p-2 text-xs text-energy-text focus:outline-none focus:border-energy-cyan font-mono">
+          </div>
+
+          <div>
+            <label class="text-energy-muted block mb-1 font-medium">Month (1–12)</label>
+            <input type="number" id="pred-month" value="5" min="1" max="12" class="w-full bg-graphite-elevated border border-graphite-border rounded p-2 text-xs text-energy-text focus:outline-none focus:border-energy-cyan font-mono">
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-graphite-border text-xs">
+          <div class="flex items-center space-x-4">
+            <label class="flex items-center space-x-1.5 cursor-pointer text-energy-text">
+              <input type="checkbox" id="pred-fest" class="rounded bg-graphite-elevated border-graphite-border text-energy-cyan focus:ring-0">
+              <span>Festival Active</span>
+            </label>
+            <label class="flex items-center space-x-1.5 cursor-pointer text-energy-text">
+              <input type="checkbox" id="pred-holiday" class="rounded bg-graphite-elevated border-graphite-border text-energy-cyan focus:ring-0">
+              <span>Gazetted Holiday</span>
+            </label>
+          </div>
+
+          <button onclick="runLivePrediction()" id="btn-run-pred" class="px-4 py-2 bg-energy-cyan text-graphite-bg font-semibold rounded text-xs hover:opacity-90 transition flex items-center gap-1.5">
+            <i data-lucide="play" class="w-3.5 h-3.5"></i>
+            <span>Execute Forecast</span>
+          </button>
+        </div>
+
+        <!-- Result Card -->
+        <div id="pred-result-card" class="p-3.5 rounded bg-graphite-elevated border border-graphite-border hidden">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-[10px] uppercase font-mono text-energy-muted">Predicted Grid Load</span>
+              <div class="text-xl font-bold font-mono text-energy-cyan mt-0.5" id="pred-result-val">-- GW</div>
+              <div class="text-[11px] text-energy-muted mt-0.5" id="pred-result-details">--</div>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-1 rounded bg-graphite-bg border border-graphite-border text-energy-green">Horizon: 24h Ahead</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SECTION 3: RENEWABLES                      -->
+    <!-- ========================================== -->
+    <section id="section-renewables" class="space-y-6 hidden">
+      <!-- Analytical Scope Disclosure Banner -->
+      <div class="p-3 rounded bg-graphite-surface border-l-2 border-energy-amber text-xs text-energy-muted flex items-start gap-2.5">
+        <i data-lucide="info" class="w-4 h-4 text-energy-amber shrink-0 mt-0.5"></i>
+        <div>
+          <span class="font-semibold text-energy-text">GRID GENERATION COMPONENT DISCLOSURE:</span>
+          Solar and wind measurements represent components of clean generation observed in National Grid SCADA telemetry. They reflect grid-connected variable renewable generation and are not conflated with total available grid capacity or spinning reserves.
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Diurnal Complementarity Chart -->
+        <div class="tech-card p-5">
+          <div class="mb-3">
+            <h3 class="text-sm font-semibold text-energy-text">Solar vs Wind Diurnal Complementarity</h3>
+            <p class="text-xs text-energy-muted">Midday solar PV peak vs evening/night wind output curve (GW)</p>
+          </div>
+          <div class="w-full h-72">
+            <canvas id="reDiurnalChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Monthly Renewable Penetration Chart -->
+        <div class="tech-card p-5">
+          <div class="mb-3">
+            <h3 class="text-sm font-semibold text-energy-text">Monthly Observed Clean Generation Share</h3>
+            <p class="text-xs text-energy-muted">Renewable percentage of aggregate grid generation (%)</p>
+          </div>
+          <div class="w-full h-72">
+            <canvas id="reMonthlyChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SECTION 4: FESTIVAL CALENDAR               -->
+    <!-- ========================================== -->
+    <section id="section-festivals" class="space-y-6 hidden">
+      <!-- Festival Comparison Chart -->
+      <div class="tech-card p-5">
+        <div class="mb-3">
+          <h2 class="text-sm font-semibold text-energy-text">Indian Festival Demand Divergence vs Baseline</h2>
+          <p class="text-xs text-energy-muted">Empirical demand changes during major festivals vs comparable non-festival days (same day-of-week & month)</p>
+        </div>
+
+        <div class="w-full h-80 mb-4">
+          <canvas id="festivalChart"></canvas>
+        </div>
+
+        <!-- Festival Impact Table -->
+        <div class="overflow-x-auto border-t border-graphite-border pt-4">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-graphite-elevated text-energy-muted border-b border-graphite-border">
+              <tr>
+                <th class="py-2 px-3">Festival / Event</th>
+                <th class="py-2 px-3">Observed Load</th>
+                <th class="py-2 px-3">Matched Baseline</th>
+                <th class="py-2 px-3">Divergence (%)</th>
+                <th class="py-2 px-3">Empirical Grid Behavioral Rationale</th>
+              </tr>
+            </thead>
+            <tbody id="festival-table-body" class="divide-y divide-graphite-border/60 font-mono">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SECTION 5: EXPANSION SIMULATOR             -->
+    <!-- ========================================== -->
+    <section id="section-expansion" class="space-y-6 hidden">
+      <!-- Statutory Disclaimer -->
+      <div class="p-3 rounded bg-graphite-surface border-l-2 border-energy-cyan text-xs text-energy-muted flex items-start gap-2.5">
+        <i data-lucide="shield-alert" class="w-4 h-4 text-energy-cyan shrink-0 mt-0.5"></i>
+        <div>
+          <span class="font-semibold text-energy-text">HYPOTHETICAL SIMULATION DISCLAIMER:</span>
+          All trajectories generated in this module are user-defined hypothetical expansion scenarios for academic capacity planning. They do not constitute official Government of India (CEA/Grid-India) generation expansion commitments.
+        </div>
+      </div>
+
+      <!-- Controls & Sliders with DEBOUNCED & ON-DEMAND NETWORK CALLS -->
+      <div class="tech-card p-5 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="text-sm font-semibold text-energy-text">Expansion Assumptions & Policy Simulator</h2>
+            <p class="text-xs text-energy-muted mt-0.5">Adjust annual growth rates to simulate multi-year peak load and clean generation share (2024–2030)</p>
+          </div>
+
+          <!-- Quick Presets -->
+          <div class="flex items-center space-x-1.5 text-xs">
+            <span class="text-energy-muted text-[11px]">Presets:</span>
+            <button onclick="applyPreset(5.5, 12.0, 8.0, 5)" class="range-pill">BAU (5.5% / 12% RE)</button>
+            <button onclick="applyPreset(7.5, 22.0, 15.0, 6)" class="range-pill">Green Push (7.5% / 22% RE)</button>
+            <button onclick="applyPreset(8.5, 6.0, 4.0, 5)" class="range-pill">Stress (8.5% / 6% RE)</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+          <div>
+            <div class="flex justify-between mb-1">
+              <span class="text-energy-muted">Annual Demand Growth:</span>
+              <span id="val-d-growth" class="font-mono font-semibold text-energy-cyan">6.0%</span>
+            </div>
+            <input type="range" id="slider-d-growth" min="2.0" max="12.0" step="0.5" value="6.0" oninput="handleSliderChange()" class="w-full accent-energy-cyan bg-graphite-elevated">
+          </div>
+
+          <div>
+            <div class="flex justify-between mb-1">
+              <span class="text-energy-muted">Annual Solar Growth:</span>
+              <span id="val-solar-growth" class="font-mono font-semibold text-energy-amber">18.0%</span>
+            </div>
+            <input type="range" id="slider-solar-growth" min="5.0" max="35.0" step="1.0" value="18.0" oninput="handleSliderChange()" class="w-full accent-energy-amber bg-graphite-elevated">
+          </div>
+
+          <div>
+            <div class="flex justify-between mb-1">
+              <span class="text-energy-muted">Annual Wind Growth:</span>
+              <span id="val-wind-growth" class="font-mono font-semibold text-energy-green">12.0%</span>
+            </div>
+            <input type="range" id="slider-wind-growth" min="3.0" max="25.0" step="1.0" value="12.0" oninput="handleSliderChange()" class="w-full accent-energy-green bg-graphite-elevated">
+          </div>
+
+          <div>
+            <div class="flex justify-between mb-1">
+              <span class="text-energy-muted">Projection Horizon:</span>
+              <span id="val-horizon" class="font-mono font-semibold text-energy-text">6 Years (to 2030)</span>
+            </div>
+            <input type="range" id="slider-horizon" min="2" max="8" step="1" value="6" oninput="handleSliderChange()" class="w-full accent-energy-cyan bg-graphite-elevated">
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between pt-3 border-t border-graphite-border text-xs">
+          <div class="flex items-center space-x-2 text-[11px] text-energy-muted">
+            <span id="scenarioStatusText" class="flex items-center gap-1">
+              <i data-lucide="check-circle" class="w-3.5 h-3.5 text-energy-green"></i> Simulation synchronized
+            </span>
+          </div>
+          
+          <button onclick="triggerScenarioSimulation(true)" id="btnSimulateScenario" class="px-3.5 py-1.5 bg-graphite-elevated hover:bg-graphite-border border border-graphite-border rounded text-energy-cyan font-medium transition flex items-center gap-1.5">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Recompute Trajectory
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Scenario Projections Chart -->
+      <div class="tech-card p-5">
+        <div class="mb-3">
+          <h3 class="text-sm font-semibold text-energy-text">Simulated Peak Demand & Clean Energy Trajectory (2024–2030)</h3>
+          <p class="text-xs text-energy-muted">Dual-axis simulation comparing Peak Grid Load (GW) and Clean Share Penetration (%)</p>
+        </div>
+        <div class="w-full h-80">
+          <canvas id="scenarioChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Long-Term Maharashtra Grid Expansion (Interactive Real Data Chart) -->
+      <div class="tech-card p-5">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h3 class="text-sm font-semibold text-energy-text">Historical State Grid Expansion: Maharashtra (2013–2024)</h3>
+            <p class="text-xs text-energy-muted">Decadal growth in peak power met (GW) and peak unmet demand deficit (MW)</p>
+          </div>
+          <span class="text-[10px] font-mono text-energy-muted bg-graphite-elevated px-2 py-1 rounded border border-graphite-border">Zenodo 3,954 Days</span>
+        </div>
+        <div class="w-full h-72">
+          <canvas id="maharashtraStateChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SECTION 6: MODEL LAB                       -->
+    <!-- ========================================== -->
+    <section id="section-models" class="space-y-6 hidden">
+      <!-- Table A: Demand Forecasting Benchmark -->
+      <div class="tech-card p-5">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+          <div>
+            <h2 class="text-sm font-semibold text-energy-text">Table A — 24-Hour Day-Ahead Demand Forecasting Benchmark</h2>
+            <p class="text-xs text-energy-muted">Evaluated on identical chronological held-out test set: March 1 – June 24, 2025 (2,784 hours)</p>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-graphite-elevated border border-graphite-border text-energy-green">Top Model: Random Forest</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-graphite-elevated text-energy-muted border-b border-graphite-border">
+              <tr>
+                <th class="py-2 px-3">Model</th>
+                <th class="py-2 px-3">MAE (MW)</th>
+                <th class="py-2 px-3">RMSE (MW)</th>
+                <th class="py-2 px-3">R² Score</th>
+                <th class="py-2 px-3">MAPE (%)</th>
+                <th class="py-2 px-3">Training Time</th>
+                <th class="py-2 px-3">Model Configuration</th>
+              </tr>
+            </thead>
+            <tbody id="table-a-body" class="divide-y divide-graphite-border/60 font-mono">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Table B: Profile Clustering Benchmark -->
+      <div class="tech-card p-5">
+        <div class="mb-3">
+          <h2 class="text-sm font-semibold text-energy-text">Table B — Unsupervised Demand Profile Clustering Benchmark</h2>
+          <p class="text-xs text-energy-muted">Taxonomy of 24-hour diurnal standardized demand shapes across 541 complete days</p>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-graphite-elevated text-energy-muted border-b border-graphite-border">
+              <tr>
+                <th class="py-2 px-3">Algorithm</th>
+                <th class="py-2 px-3">Feature Representation</th>
+                <th class="py-2 px-3">Clusters (k)</th>
+                <th class="py-2 px-3">Silhouette Score</th>
+                <th class="py-2 px-3">Davies-Bouldin Index</th>
+                <th class="py-2 px-3">Physical Cluster Interpretation</th>
+              </tr>
+            </thead>
+            <tbody id="table-b-body" class="divide-y divide-graphite-border/60 font-mono">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Interactive Diagnostic Charts: LSTM Loss Curves & Feature Importance -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Interactive PyTorch LSTM Loss Curves -->
+        <div class="tech-card p-5">
+          <div class="mb-3">
+            <h3 class="text-sm font-semibold text-energy-text">PyTorch LSTM Learning & Early Stopping Curves</h3>
+            <p class="text-xs text-energy-muted">Training vs Validation MSE Loss (early stopping triggered at epoch 6)</p>
+          </div>
+          <div class="w-full h-64">
+            <canvas id="lstmLossChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Interactive Random Forest Feature Importance -->
+        <div class="tech-card p-5">
+          <div class="mb-3">
+            <h3 class="text-sm font-semibold text-energy-text">Random Forest Feature Importance Weights</h3>
+            <p class="text-xs text-energy-muted">Top 12 non-leaking predictors ranked by Gini impurity reduction</p>
+          </div>
+          <div class="w-full h-64">
+            <canvas id="featureImportanceChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- K-Means Diurnal Shape Centroids -->
+      <div class="tech-card p-5">
+        <div class="mb-3">
+          <h3 class="text-sm font-semibold text-energy-text">K-Means Diurnal Shape Regimes (Centroids k=3)</h3>
+          <p class="text-xs text-energy-muted">Hour-by-hour demand profiles: Mild base load vs intermediate dual-peak vs extreme summer heatwave peak</p>
+        </div>
+        <div class="w-full h-72">
+          <canvas id="clusterCentroidsChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SECTION 7: DATA EXPLORER                   -->
+    <!-- ========================================== -->
+    <section id="section-explorer" class="space-y-6 hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Provenance -->
+        <div class="tech-card p-5 space-y-3">
+          <h2 class="text-sm font-semibold text-energy-text">Dataset Provenance & Citations</h2>
+          <div class="text-xs space-y-2 text-energy-muted">
+            <p><span class="text-energy-text font-medium">Primary SCADA Archive:</span> Grid Controller of India (Grid-India) / Mendeley Data</p>
+            <p><span class="text-energy-text font-medium">DOI:</span> <a href="https://doi.org/10.17632/y58jknpgs8.2" target="_blank" class="text-energy-cyan hover:underline font-mono">10.17632/y58jknpgs8.2</a></p>
+            <p><span class="text-energy-text font-medium">Sampling & Coverage:</span> 1-Hour frequency | 12,984 observations (Jan 2024 – Jun 2025)</p>
+            <p><span class="text-energy-text font-medium">State-Level Archive:</span> Zenodo Daily Indian States (<span class="font-mono text-energy-cyan">10.5281/zenodo.14983362</span>)</p>
+            <p><span class="text-energy-text font-medium">Licensing:</span> Creative Commons Attribution 4.0 International (CC BY 4.0)</p>
+          </div>
+        </div>
+
+        <!-- Quality Audit -->
+        <div class="tech-card p-5 space-y-3">
+          <h2 class="text-sm font-semibold text-energy-text">Data Quality Audit & Sanitization Log</h2>
+          <div class="text-xs space-y-2">
+            <p class="text-energy-green flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> Continuous 1-hour sampling grid verified (0 missing hours)</p>
+            <p class="text-energy-green flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> Nighttime solar sensor baseline zero-drift clamped (&ge; 0 MW)</p>
+            <p class="text-energy-green flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> Metadata footer summary rows sanitized</p>
+            <p class="text-energy-green flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5"></i> Lags strictly shifted by &ge; 24h (zero statistical leakage)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature Dictionary Table -->
+      <div class="tech-card p-5">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h2 class="text-sm font-semibold text-energy-text">Feature Dictionary & Leakage Integrity Matrix</h2>
+            <p class="text-xs text-energy-muted">30 engineered parameters and their strict causality status</p>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-1 rounded bg-graphite-elevated text-energy-muted border border-graphite-border">30 Features</span>
+        </div>
+
+        <div class="overflow-x-auto max-h-96">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-graphite-elevated text-energy-muted border-b border-graphite-border sticky top-0">
+              <tr>
+                <th class="py-2 px-3">Feature Name</th>
+                <th class="py-2 px-3">Data Type</th>
+                <th class="py-2 px-3">Leakage Integrity Status</th>
+                <th class="py-2 px-3">Measurement Unit</th>
+                <th class="py-2 px-3">Mathematical Formulation / Description</th>
+              </tr>
+            </thead>
+            <tbody id="features-table-body" class="divide-y divide-graphite-border/60 font-mono">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-graphite-border bg-graphite-surface py-3 text-center text-xs text-energy-muted">
+    WattWise AI &bull; Shri Ramdeobaba University, Nagpur &bull; Machine Learning Laboratory Mini-Project
+  </footer>
+
+  <!-- SCRIPT ENGINE -->
+  <script>
+    // -------------------------------------------------------------
+    // Global Chart Defaults & Styling Tokens
+    // -------------------------------------------------------------
+    Chart.defaults.color = '#8D99A6';
+    Chart.defaults.font.family = 'Inter, -apple-system, sans-serif';
+    Chart.defaults.font.size = 11;
+    Chart.defaults.plugins.tooltip.backgroundColor = '#181E25';
+    Chart.defaults.plugins.tooltip.borderColor = '#252D36';
+    Chart.defaults.plugins.tooltip.borderWidth = 1;
+    Chart.defaults.plugins.tooltip.titleColor = '#F3F6F8';
+    Chart.defaults.plugins.tooltip.bodyColor = '#8D99A6';
+    Chart.defaults.plugins.tooltip.padding = 8;
+    Chart.defaults.plugins.tooltip.boxPadding = 4;
+
+    // Chart Instance Registry
+    const charts = {
+      historical: null,
+      seasonal: null,
+      forecast: null,
+      reDiurnal: null,
+      reMonthly: null,
+      festival: null,
+      scenario: null,
+      maharashtra: null,
+      lstmLoss: null,
+      featureImportance: null,
+      clusterCentroids: null
+    };
+
+    // Tab Header Metadata
+    const TAB_METADATA = {
+      overview: { title: "Energy Overview", sub: "Macro Grid Load, Clean Generation & Peak Demand Envelope" },
+      forecasting: { title: "Demand Forecasting", sub: "24-Hour Day-Ahead Direct Predictions & Benchmark Workspace" },
+      renewables: { title: "Renewable Generation", sub: "Solar vs Wind Diurnal Complementarity & Clean Share" },
+      festivals: { title: "Festival Calendar", sub: "Socio-Cultural Holiday Demand Divergence vs Matched Baselines" },
+      expansion: { title: "Expansion Simulator", sub: "Hypothetical Decadal Load Growth & Clean Target Policy Planner" },
+      models: { title: "Model Laboratory", sub: "Forecasting & Unsupervised Clustering Evaluation Workbenches" },
+      explorer: { title: "Data Explorer", sub: "Telemetry Provenance, Quality Audits & 30-Feature Data Dictionary" }
+    };
+
+    // -------------------------------------------------------------
+    // Tab Navigation Controller
+    // -------------------------------------------------------------
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
+
+      const activeBtn = document.getElementById('tab-' + tabId);
+      const activeSec = document.getElementById('section-' + tabId);
+      if (activeBtn) activeBtn.classList.add('active');
+      if (activeSec) activeSec.classList.remove('hidden');
+
+      const meta = TAB_METADATA[tabId];
+      if (meta) {
+        document.getElementById('header-section-title').innerText = meta.title;
+        document.getElementById('header-section-sub').innerText = meta.sub;
+      }
+
+      // Lazy load heavy chart views
+      if (tabId === 'forecasting' && !charts.forecast) initForecastTestChart();
+      if (tabId === 'renewables' && !charts.reDiurnal) initRenewableCharts();
+      if (tabId === 'festivals' && !charts.festival) initFestivalChart();
+      if (tabId === 'expansion' && !charts.scenario) {
+        triggerScenarioSimulation(false);
+        initMaharashtraChart();
+      }
+      if (tabId === 'models' && !charts.lstmLoss) initModelLabCharts();
+    }
+
+    // -------------------------------------------------------------
+    // SECTION 1: OVERVIEW CONTROLLERS
+    // -------------------------------------------------------------
+    async function loadOverviewKPIs() {
+      try {
+        const res = await fetch('/api/overview/kpis');
+        const d = await res.json();
+        document.getElementById('kpi-demand').innerText = d.latest_demand_gw.toFixed(2) + ' GW';
+        document.getElementById('kpi-demand-mw').innerText = Math.round(d.latest_demand_gw * 1000).toLocaleString();
+        document.getElementById('kpi-demand-time').innerText = d.latest_timestamp;
+        
+        document.getElementById('kpi-solar').innerText = d.latest_solar_gw.toFixed(2) + ' GW';
+        document.getElementById('kpi-peak-solar').innerText = d.peak_solar_gw.toFixed(2) + ' GW';
+        
+        document.getElementById('kpi-wind').innerText = d.latest_wind_gw.toFixed(2) + ' GW';
+        document.getElementById('kpi-peak-wind').innerText = d.peak_wind_gw.toFixed(2) + ' GW';
+        
+        document.getElementById('kpi-peak').innerText = d.all_time_peak_demand_gw.toFixed(2) + ' GW';
+        document.getElementById('kpi-peak-date').innerText = d.all_time_peak_demand_time;
+      } catch (err) {
+        console.error('Error loading KPIs:', err);
+      }
+    }
+
+    async function loadSupportingInsights() {
+      try {
+        const res = await fetch('/api/overview/insights');
+        const data = await res.json();
+        const container = document.getElementById('overview-insights-container');
+        container.innerHTML = '';
+        data.insights.forEach(ins => {
+          container.innerHTML += `
+            <div class="tech-card p-4 space-y-2 border-l-2 border-${ins.color === 'rose' ? 'energy-coral' : (ins.color === 'amber' ? 'energy-amber' : 'energy-cyan')}">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-semibold text-energy-text">${ins.title}</span>
+                <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-graphite-elevated text-energy-muted">${ins.tag}</span>
+              </div>
+              <p class="text-xs text-energy-text font-medium">${ins.finding}</p>
+              <p class="text-[11px] text-energy-muted leading-relaxed">${ins.context}</p>
+            </div>
+          `;
+        });
+        lucide.createIcons();
+      } catch (err) {
+        console.error('Error loading insights:', err);
+      }
+    }
+
+    let currentHistoricalRange = '30D';
+    async function loadHistoricalChartRange(range) {
+      currentHistoricalRange = range;
+      document.querySelectorAll('.range-pill').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById('btn-range-' + range);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      const loader = document.getElementById('historicalChartLoader');
+      loader.classList.remove('hidden');
+
+      try {
+        const res = await fetch('/api/overview/historical-series?range=' + range);
+        const d = await res.json();
+        
+        const ctx = document.getElementById('overviewHistoricalChart').getContext('2d');
+        if (charts.historical) charts.historical.destroy();
+
+        charts.historical = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: d.timestamps,
+            datasets: [
+              {
+                label: 'National Demand (GW)',
+                data: d.demand_gw,
+                borderColor: '#39D9F2',
+                backgroundColor: 'rgba(57, 217, 242, 0.08)',
+                borderWidth: 1.8,
+                pointRadius: 0,
+                fill: true,
+                tension: 0.2
+              },
+              {
+                label: 'Solar Output (GW)',
+                data: d.solar_gw,
+                borderColor: '#F6C453',
+                borderWidth: 1.2,
+                pointRadius: 0,
+                borderDash: [3, 3]
+              },
+              {
+                label: 'Wind Output (GW)',
+                data: d.wind_gw,
+                borderColor: '#65E6A5',
+                borderWidth: 1.2,
+                pointRadius: 0,
+                borderDash: [2, 2]
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            scales: {
+              x: { ticks: { maxTicksLimit: 10, color: '#8D99A6' }, grid: { color: '#181E25' } },
+              y: { ticks: { color: '#8D99A6' }, grid: { color: '#181E25' }, title: { display: true, text: 'Gigawatts (GW)', color: '#8D99A6' } }
+            },
+            plugins: {
+              legend: { position: 'top', align: 'end', labels: { boxWidth: 12, color: '#F3F6F8' } }
+            }
+          }
+        });
+      } catch (err) {
+        console.error('Error loading historical chart:', err);
+      } finally {
+        loader.classList.add('hidden');
+      }
+    }
+
+    async function loadHeatmapMatrix() {
+      try {
+        const res = await fetch('/api/overview/heatmap-matrix');
+        const d = await res.json();
+        document.getElementById('heatmap-min').innerText = `Low: ${d.min_gw} GW`;
+        document.getElementById('heatmap-max').innerText = `High: ${d.max_gw} GW`;
+
+        const container = document.getElementById('heatmapContainer');
+        container.innerHTML = '';
+
+        d.days.forEach((day, dIdx) => {
+          let rowHtml = `<div class="flex items-center space-x-1.5"><span class="w-8 text-[10px] text-energy-muted font-mono">${day}</span><div class="flex-1 flex space-x-0.5">`;
+          d.matrix[dIdx].forEach((val, hIdx) => {
+            // Normalize between 0 and 1
+            const norm = (val - d.min_gw) / (d.max_gw - d.min_gw);
+            // Color from dark navy to cyan
+            const r = Math.round(18 + norm * 39);
+            const g = Math.round(30 + norm * 187);
+            const b = Math.round(50 + norm * 192);
+            rowHtml += `<div title="${day} ${hIdx}:00 IST: ${val} GW" class="flex-1 h-5 rounded-[2px] transition hover:scale-110 cursor-pointer" style="background-color: rgb(${r},${g},${b});"></div>`;
+          });
+          rowHtml += `</div></div>`;
+          container.innerHTML += rowHtml;
+        });
+      } catch (err) {
+        console.error('Error loading heatmap:', err);
+      }
+    }
+
+    async function loadSeasonalCurves() {
+      try {
+        const res = await fetch('/api/overview/seasonal-curves');
+        const d = await res.json();
+        const ctx = document.getElementById('seasonalChart').getContext('2d');
+        if (charts.seasonal) charts.seasonal.destroy();
+
+        charts.seasonal = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: d.hours.map(h => `${h}:00`),
+            datasets: [
+              { label: 'Summer Peak', data: d.curves.Summer, borderColor: '#FF7B72', borderWidth: 2, pointRadius: 0, tension: 0.2 },
+              { label: 'Monsoon Moderate', data: d.curves.Monsoon, borderColor: '#65E6A5', borderWidth: 2, pointRadius: 0, tension: 0.2 },
+              { label: 'Post-Monsoon', data: d.curves['Post-Monsoon'], borderColor: '#F6C453', borderWidth: 1.8, pointRadius: 0, tension: 0.2 },
+              { label: 'Winter Base', data: d.curves.Winter, borderColor: '#39D9F2', borderWidth: 1.8, pointRadius: 0, tension: 0.2 }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { ticks: { maxTicksLimit: 12, color: '#8D99A6' }, grid: { color: '#181E25' } },
+              y: { ticks: { color: '#8D99A6' }, grid: { color: '#181E25' } }
+            },
+            plugins: { legend: { position: 'top', align: 'end', labels: { boxWidth: 10, color: '#F3F6F8' } } }
+          }
+        });
+      } catch (err) {
+        console.error('Error loading seasonal curves:', err);
+      }
+    }
+
+    // -------------------------------------------------------------
+    // SECTION 2: FORECASTS WORKSPACE
+    // -------------------------------------------------------------
+    async function initForecastTestChart() {
+      try {
+        const res = await fetch('/api/forecast/test-sample?limit=168');
+        const d = await res.json();
+        const ctx = document.getElementById('forecastTestChart').getContext('2d');
+        if (charts.forecast) charts.forecast.destroy();
+
+        charts.forecast = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: d.datetime.map(t => t.slice(5, 16)),
+            datasets: [
+              { label: 'Actual Demand (GW)', data: d.actual_gw, borderColor: '#F3F6F8', borderWidth: 2, pointRadius: 0 },
+              { label: 'Random Forest (GW)', data: d.random_forest_gw, borderColor: '#39D9F2', borderWidth: 1.8, borderDash: [4, 4], pointRadius: 0 },
+              { label: 'PyTorch LSTM (GW)', data: d.lstm_gw, borderColor: '#65E6A5', borderWidth: 1.5, pointRadius: 0 },
+              { label: 'Seasonal Naive (GW)', data: d.naive_gw, borderColor: '#8D99A6', borderWidth: 1, borderDash: [2, 2], pointRadius: 0 }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            scales: {
+              x: { ticks: { maxTicksLimit: 12, color: '#8D99A6' }, grid: { color: '#181E25' } },
+              y: { ticks: { color: '#8D99A6' }, grid: { color: '#181E25' }, title: { display: true, text: 'Demand (GW)', color: '#8D99A6' } }
+            },
+            plugins: { legend: { position: 'top', align: 'end', labels: { boxWidth: 12, color: '#F3F6F8' } } }
+          }
+        });
+      } catch (err) {
+        console.error('Error init forecast test chart:', err);
+      }
+    }
+
+    async function runLivePrediction() {
+      const model = document.getElementById('pred-model').value;
+      const hour = parseInt(document.getElementById('pred-hour').value);
+      const lag24 = parseFloat(document.getElementById('pred-lag24').value) * 1000.0;
+      const month = parseInt(document.getElementById('pred-month').value);
+      const isFest = document.getElementById('pred-fest').checked ? 1 : 0;
+      const isHol = document.getElementById('pred-holiday').checked ? 1 : 0;
+
+      const btn = document.getElementById('btn-run-pred');
+      btn.disabled = true;
+      btn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i><span>Inferring...</span>`;
+      lucide.createIcons();
+
+      try {
+        const res = await fetch('/api/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model_name: model,
+            hour: hour,
+            dayofweek: 2,
+            month: month,
+            is_festival: isFest,
+            is_public_holiday: isHol,
+            demand_lag_24: lag24,
+            demand_lag_48: lag24 * 0.98,
+            demand_lag_168: lag24 * 0.97,
+            demand_lag_336: lag24 * 0.96,
+            solar_lag_24: hour >= 8 && hour <= 17 ? 25000.0 : 0.0,
+            wind_lag_24: 7500.0
+          })
+        });
+        const d = await res.json();
+        const card = document.getElementById('pred-result-card');
+        card.classList.remove('hidden');
+        document.getElementById('pred-result-val').innerText = d.predicted_demand_gw.toFixed(2) + ' GW';
+        document.getElementById('pred-result-details').innerText = `${d.predicted_demand_mw.toLocaleString()} MW &bull; Evaluated via ${d.model_used}`;
+      } catch (err) {
+        console.error('Prediction error:', err);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i data-lucide="play" class="w-3.5 h-3.5"></i><span>Execute Forecast</span>`;
+        lucide.createIcons();
+      }
+    }
+
+    // -------------------------------------------------------------
+    // SECTION 3: RENEWABLES CONTROLLERS
+    // -------------------------------------------------------------
+    async function initRenewableCharts() {
+      try {
+        const res = await fetch('/api/renewable/trends');
+        const d = await res.json();
+
+        // Diurnal Solar vs Wind
+        const ctx1 = document.getElementById('reDiurnalChart').getContext('2d');
+        if (charts.reDiurnal) charts.reDiurnal.destroy();
+        charts.reDiurnal = new Chart(ctx1, {
+          type: 'line',
+          data: {
+            labels: d.hours.map(h => `${h}:00`),
+            datasets: [
+              { label: 'Solar Output (GW)', data: d.solar_avg_gw, borderColor: '#F6C453', backgroundColor: 'rgba(246, 196, 83, 0.08)', fill: true, borderWidth: 2, pointRadius: 0 },
+              { label: 'Wind Output (GW)', data: d.wind_avg_gw, borderColor: '#39D9F2', backgroundColor: 'rgba(57, 217, 242, 0.08)', fill: true, borderWidth: 2, pointRadius: 0 }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { ticks: { color: '#8D99A6' }, grid: { color: '#181E25' } },
+              y: { ticks: { color: '#8D99A6' }, grid: { color: '#181E25' }, title: { display: true, text: 'GW', color: '#8D99A6' } }
+            },
+            plugins: { legend: { position: 'top', align: 'end', labels: { boxWidth: 10, color: '#F3F6F8' } } }
+          }
+        });
+
+        // Monthly Penetration
+        const ctx2 = document.getElementById('reMonthlyChart').getContext('2d');
+        if (charts.reMonthly) charts.reMonthly.destroy();
+        charts.reMonthly = new Chart(ctx2, {
+          type: 'bar',
+          data: {
+            labels: d.monthly_labels,
+            datasets: [{ label: 'Renewable Generation Share (%)', data: d.monthly_renewable_pct, backgroundColor: '#65E6A5', borderRadius: 3 }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { ticks: { color: '#8D99A6', maxRotation: 45 }, grid: { color: '#181E25' } },
+              y: { ticks: { color: '#8D99A6' }, grid: { color: '#181E25' }, title: { display: true, text: 'Percentage (%)', color: '#8D99A6' } }
+            },
+            plugins: { legend: { position: 'top', align: 'end', labels: { boxWidth: 10, color: '#F3F6F8' } } }
+          }
+        });
+      } catch (err) {
+        console.error('Error init renewables:', err);
+      }
+    }
+
+    // -------------------------------------------------------------
+    // SECTION 4: FESTIVALS CONTROLLERS
+    // -------------------------------------------------------------
+    async function initFestivalChart() {
+      try {
+        const res = await fetch('/api/festivals/impact');
+        const data = await res.json();
+        
+        const labels = data.festival_comparisons.map(f => f.festival);
+        const festLoads = data.festival_comparisons.map(f => f.festival_demand_gw);
+        const baseLoads = data.festival_comparisons.map(f => f.baseline_demand_gw);
+
+        const ctx = document.getElementById('festivalChart').getContext('2d');
+        if (charts.festival) charts.festival.destroy();
+
+        charts.festival = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [
+              { label: 'Festival Day Load (GW)', data: festLoads, backgroundColor: '#F6C453', borderRadius: 3 },
+              { label: 'Matched Baseline Load (GW)', data: baseLoads, backgroundColor: '#252D36', borderRadius: 3 }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { ticks: { color: '#8D99A6' }, grid: { color: '#181E25' } },
+              y: { ticks: { color: '#8D99A6' }, grid: { color: '#181E25' }, title: { display: true, text: 'Average Load (GW)', color: '#8D99A6' } }
+            },
+            plugins: { legend: { position: 'top', align: 'end', labels: { boxWidth: 10, color: '#F3F6F8' } } }
+          }
+        });
+
+        // Table population
+        const tb = document.getElementById('festival-table-body');
+        tb.innerHTML = '';
+        data.festival_comparisons.forEach(row => {
+          const isNeg = row.diff_pct < 0;
+          tb.innerHTML += `
+            <tr>
+              <td class="py-2.5 px-3 font-semibold text-energy-text font-sans">${row.festival}</td>
+              <td class="py-2.5 px-3">${row.festival_demand_gw} GW</td>
+              <td class="py-2.5 px-3">${row.baseline_demand_gw} GW</td>
+              <td class="py-2.5 px-3 font-bold ${isNeg ? 'text-energy-coral' : 'text-energy-green'}">
+                ${isNeg ? '' : '+'}${row.diff_pct.toFixed(2)}%
+              </td>
+              <td class="py-2.5 px-3 text-energy-muted font-sans text-[11px]">
+                ${isNeg ? 'Industrial holiday ramp-down & commercial office shutdowns' : 'Evening festive lighting surges & domestic celebratory consumption'}
+              </td>
+            </tr>
+          `;
+        });
+      } catch (err) {
+        console.error('Error init festival chart:', err);
+      }
+    }
+
+    // -------------------------------------------------------------
+    // SECTION 5: EXPANSION SIMULATOR WITH DEBOUNCE & ABORTCONTROLLER
+    // CRITICAL: FIXES REPEATED UNCONTROLLED POST REQUESTS
+    // -------------------------------------------------------------
+    let scenarioDebounceTimer = null;
+    let scenarioAbortController = null;
+    let lastScenarioPayloadHash = null;
+
+    function handleSliderChange() {
+      // Immediate UI Numeric Feedback (Zero Network Overhead)
+      const dGrowth = parseFloat(document.getElementById('slider-d-growth').value);
+      const solarGrowth = parseFloat(document.getElementById('slider-solar-growth').value);
+      const windGrowth = parseFloat(document.getElementById('slider-wind-growth').value);
+      const horizon = parseInt(document.getElementById('slider-horizon').value);
+
+      document.getElementById('val-d-growth').innerText = dGrowth.toFixed(1) + '%';
+      document.getElementById('val-solar-growth').innerText = solarGrowth.toFixed(1) + '%';
+      document.getElementById('val-wind-growth').innerText = windGrowth.toFixed(1) + '%';
+      document.getElementById('val-horizon').innerText = `${horizon} Years (to ${2024 + horizon})`;
+
+      // Debounce the network request (350ms trailing window)
+      clearTimeout(scenarioDebounceTimer);
+      document.getElementById('scenarioStatusText').innerHTML = `
+        <span class="flex items-center gap-1 text-energy-amber"><i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> Queuing simulation...</span>
+      `;
+      lucide.createIcons();
+
+      scenarioDebounceTimer = setTimeout(() => {
+        triggerScenarioSimulation(false);
+      }, 350);
+    }
+
+    function applyPreset(dGrowth, solarGrowth, windGrowth, horizon) {
+      document.getElementById('slider-d-growth').value = dGrowth;
+      document.getElementById('slider-solar-growth').value = solarGrowth;
+      document.getElementById('slider-wind-growth').value = windGrowth;
+      document.getElementById('slider-horizon').value = horizon;
+      handleSliderChange();
+    }
+
+    async function triggerScenarioSimulation(force = false) {
+      const dGrowth = parseFloat(document.getElementById('slider-d-growth').value);
+      const solarGrowth = parseFloat(document.getElementById('slider-solar-growth').value);
+      const windGrowth = parseFloat(document.getElementById('slider-wind-growth').value);
+      const horizon = parseInt(document.getElementById('slider-horizon').value);
+
+      const payload = {
+        annual_demand_growth_pct: dGrowth,
+        annual_solar_growth_pct: solarGrowth,
+        annual_wind_growth_pct: windGrowth,
+        horizon_years: horizon,
+        peak_demand_multiplier: 1.04
+      };
+
+      const payloadHash = JSON.stringify(payload);
+      if (!force && payloadHash === lastScenarioPayloadHash) {
+        document.getElementById('scenarioStatusText').innerHTML = `
+          <span class="flex items-center gap-1 text-energy-green"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-energy-green"></i> Simulation synchronized</span>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      // Abort previous in-flight request if user dragged slider
+      if (scenarioAbortController) {
+        scenarioAbortController.abort();
+      }
+      scenarioAbortController = new AbortController();
+
+      document.getElementById('scenarioStatusText').innerHTML = `
+        <span class="flex items-center gap-1 text-energy-cyan"><i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> Computing trajectory...</span>
+      `;
+      lucide.createIcons();
+
+      try {
+        const res = await fetch('/api/expansion/simulate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: payloadHash,
+          signal: scenarioAbortController.signal
+        });
+        const data = await res.json();
+        lastScenarioPayloadHash = payloadHash;
+
+        const years = data.projections.map(p => p.year.toString());
+        const peakGW = data.projections.map(p => p.projected_peak_demand_gw);
+        const reShare = data.projections.map(p => p.projected_renewable_share_pct);
+
+        const ctx = document.getElementById('scenarioChart').getContext('2d');
+        if (charts.scenario) charts.scenario.destroy();
+
+        charts.scenario = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: years,
+            datasets: [
+              {
+                label: 'Projected Peak Grid Load (GW)',
+                data: peakGW,
+                borderColor: '#FF7B72',
+                backgroundColor: 'rgba(255, 123, 114, 0.08)',
+                fill: true,
+                borderWidth: 2,
+                pointRadius: 3,
+                yAxisID: 'y'
+              },
+              {
+                label: 'Projected Clean Generation Share (%)',
+                data: reShare,
+                borderColor: '#65E6A5',
+                borderDash: [4, 4],
+                borderWidth: 2,
+                pointRadius: 3,
+                yAxisID: 'y1'
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { ticks: { color: '#8D99A6' }, grid: { color: '#181E25' } },
+              y: { ticks: { color: '#FF7B72' }, grid: { color: '#181E25' }, title: { display: true, text: 'Peak Load (GW)', color: '#FF7B72' } },
+              y1: { position: 'right', ticks: { color: '#65E6A5' }, grid: { drawOnChartArea: false }, title: { display: true, text: 'Clean Share (%)', color: '#65E6A5' } }
+            },
+            plugins: { legend: { position: 'top', align: 'end', labels: { boxWidth: 10, color: '#F3F6F8' } } }
+          }
+        });
+
+        document.getElementById('scenarioStatusText').innerHTML = `
+          <span class="flex items-center gap-1 text-energy-green"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-energy-green"></i> Simulation synchronized</span>
+        `;
+        lucide.createIcons();
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          console.error('Scenario simulation error:', err);
+          document.getElementById('scenarioStatusText').innerHTML = `
+            <span class="flex items-center gap-1 text-energy-coral"><i data-lucide="alert-circle" class="w-3.5 h-3.5 text-energy-coral"></i> Failed to compute</span>
+          `;
+          lucide.createIcons();
+        }
+      }
+    }
+
+    async function initMaharashtraChart() {
+      try {
+        const res = await fetch('/api/state/maharashtra/series?sample_step=14');
+        const d = await res.json();
+        const ctx = document.getElementById('maharashtraStateChart').getContext('2d');
+        if (charts.maharashtra) charts.maharashtra.destroy();
+
+        charts.maharashtra = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: d.dates,
+            datasets: [
+              {
+                label: 'Maharashtra Peak Power Supplied (GW)',
+                data: d.peak_met_gw,
+                borderColor: '#39D9F2',
+                borderWidth: 1.5,
+                pointRadius: 0,
+                yAxisID: 'y'
+              },
+              {
+                label: 'Peak Unmet Deficit (MW)',
+                data: d.peak_unmet_mw,
+                borderColor: '#FF7B72',
+                backgroundColor: 'rgba(255, 123, 114, 0.2)',
+                fill: true,
+                borderWidth: 1,
+                pointRadius: 0,
+                yAxisID: 'y1'
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { ticks: { maxTicksLimit: 12, color: '#8D99A6' }, grid: { color: '#181E25' } },
+              y: { ticks: { color: '#39D9F2' }, grid: { color: '#181E25' }, title: { display: true, text: 'Peak Met (GW)', color: '#39D9F2' } },
+              y1: { position: 'right', ticks: { color: '#FF7B72' }, grid: { drawOnChartArea: false }, title: { display: true, text: 'Unmet (MW)', color: '#FF7B72' } }
+            },
+            plugins: { legend: { position: 'top', align: 'end', labels: { boxWidth: 10, color: '#F3F6F8' } } }
+          }
+        });
+      } catch (err) {
+        console.error('Error init maharashtra chart:', err);
+      }
+    }
+
+    // -------------------------------------------------------------
+    // SECTION 6: MODEL LAB CONTROLLERS
+    // -------------------------------------------------------------
+    async function loadModelsComparisonTables() {
+      try {
+        const res = await fetch('/api/models/comparison');
+        const data = await res.json();
+
+        // Table A
+        const tbA = document.getElementById('table-a-body');
+        tbA.innerHTML = '';
+        data.forecasting_benchmark.forEach(row => {
+          const isBest = row.Model.includes('Random Forest');
+          tbA.innerHTML += `
+            <tr class="${isBest ? 'bg-energy-green/10 text-energy-green font-semibold' : ''}">
+              <td class="py-2 px-3 font-sans">${row.Model} ${isBest ? '&bull; BEST' : ''}</td>
+              <td class="py-2 px-3">${row['MAE (MW)'].toLocaleString()}</td>
+              <td class="py-2 px-3">${row['RMSE (MW)'].toLocaleString()}</td>
+              <td class="py-2 px-3">${row['R2']}</td>
+              <td class="py-2 px-3">${row['MAPE (%)']}%</td>
+              <td class="py-2 px-3">${row['Training Time (s)']}s</td>
+              <td class="py-2 px-3 text-energy-muted font-sans text-[11px]">${row['Model Configuration']}</td>
+            </tr>
+          `;
+        });
+
+        // Table B
+        const tbB = document.getElementById('table-b-body');
+        tbB.innerHTML = '';
+        data.clustering_benchmark.forEach(row => {
+          tbB.innerHTML += `
+            <tr>
+              <td class="py-2 px-3 font-sans text-energy-text">${row.Algorithm}</td>
+              <td class="py-2 px-3 text-energy-muted font-sans">${row['Feature Representation']}</td>
+              <td class="py-2 px-3">${row['Cluster Count']}</td>
+              <td class="py-2 px-3 font-bold text-energy-cyan">${row['Silhouette Score']}</td>
+              <td class="py-2 px-3 text-energy-amber">${row['Davies-Bouldin Index']}</td>
+              <td class="py-2 px-3 text-energy-muted font-sans text-[11px]">${row['Cluster Interpretation']}</td>
+            </tr>
+          `;
+        });
+      } catch (err) {
+        console.error('Error loading model tables:', err);
+      }
+    }
+
+    async function initModelLabCharts() {
+      try {
+        // LSTM Loss History
+        const res1 = await fetch('/api/models/lstm-loss');
+        const d1 = await res1.json();
+        const ctx1 = document.getElementById('lstmLossChart').getContext('2d');
+        if (charts.lstmLoss) charts.lstmLoss.destroy();
+
+        charts.lstmLoss = new Chart(ctx1, {
+          type: 'line',
+          data: {
+            labels: d1.epoch.map(e => `Epoch ${e}`),
+            datasets: [
+              { label: 'Training Loss (MSE)', data: d1.train_loss, borderColor: '#39D9F2', borderWidth: 2, pointRadius: 3 },
+              { label: 'Validation Loss (MSE)', data: d1.val_loss, borderColor: '#FF7B72', borderWidth: 2, pointRadius: 3 }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { ticks: { color: '#8D99A6' }, grid: { color: '#181E25' } },
+              y: { ticks: { color: '#8D99A6' }, grid: { color: '#181E25' }, title: { display: true, text: 'Standardized MSE', color: '#8D99A6' } }
+            },
+            plugins: { legend: { position: 'top', align: 'end', labels: { boxWidth: 10, color: '#F3F6F8' } } }
+          }
+        });
+
+        // Feature Importance
+        const res2 = await fetch('/api/models/feature-importance');
+        const d2 = await res2.json();
+        const ctx2 = document.getElementById('featureImportanceChart').getContext('2d');
+        if (charts.featureImportance) charts.featureImportance.destroy();
+
+        charts.featureImportance = new Chart(ctx2, {
+          type: 'bar',
+          data: {
+            labels: d2.features.map(f => f.length > 18 ? f.slice(0, 16) + '..' : f),
+            datasets: [{ label: 'Feature Importance', data: d2.importances, backgroundColor: '#39D9F2', borderRadius: 2 }]
+          },
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { ticks: { color: '#8D99A6' }, grid: { color: '#181E25' } },
+              y: { ticks: { color: '#F3F6F8', font: { family: 'JetBrains Mono', size: 10 } }, grid: { display: false } }
+            },
+            plugins: { legend: { display: false } }
+          }
+        });
+
+        // K-Means Cluster Centroids
+        const res3 = await fetch('/api/clustering/profiles');
+        const d3 = await res3.json();
+        const ctx3 = document.getElementById('clusterCentroidsChart').getContext('2d');
+        if (charts.clusterCentroids) charts.clusterCentroids.destroy();
+
+        const colors = ['#39D9F2', '#65E6A5', '#FF7B72'];
+        const datasets = d3.clusters.map((c, idx) => ({
+          label: `${c.regime_name} (${c.percentage}%)`,
+          data: c.hourly_profile_mw.map(v => v / 1000.0),
+          borderColor: colors[idx % colors.length],
+          borderWidth: 2,
+          pointRadius: 0,
+          tension: 0.2
+        }));
+
+        charts.clusterCentroids = new Chart(ctx3, {
+          type: 'line',
+          data: {
+            labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
+            datasets: datasets
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { ticks: { color: '#8D99A6' }, grid: { color: '#181E25' } },
+              y: { ticks: { color: '#8D99A6' }, grid: { color: '#181E25' }, title: { display: true, text: 'Cluster Average Demand (GW)', color: '#8D99A6' } }
+            },
+            plugins: { legend: { position: 'top', align: 'end', labels: { boxWidth: 10, color: '#F3F6F8' } } }
+          }
+        });
+      } catch (err) {
+        console.error('Error init model lab charts:', err);
+      }
+    }
+
+    // -------------------------------------------------------------
+    // SECTION 7: DATA EXPLORER CONTROLLER
+    // -------------------------------------------------------------
+    async function loadDataExplorer() {
+      try {
+        const res = await fetch('/api/data/explorer');
+        const data = await res.json();
+        const tb = document.getElementById('features-table-body');
+        tb.innerHTML = '';
+        data.features.forEach(f => {
+          tb.innerHTML += `
+            <tr>
+              <td class="py-2 px-3 text-energy-cyan font-bold">${f.feature_name}</td>
+              <td class="py-2 px-3 text-energy-muted font-sans">${f.type}</td>
+              <td class="py-2 px-3"><span class="px-1.5 py-0.5 rounded text-[10px] bg-graphite-elevated text-energy-text border border-graphite-border">${f.leakage_status}</span></td>
+              <td class="py-2 px-3 text-energy-amber">${f.unit}</td>
+              <td class="py-2 px-3 font-sans text-energy-muted text-[11px]">${f.description}</td>
+            </tr>
+          `;
+        });
+      } catch (err) {
+        console.error('Error loading data explorer:', err);
+      }
+    }
+
+    // -------------------------------------------------------------
+    // DOM READY STARTUP
+    // -------------------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      loadOverviewKPIs();
+      loadSupportingInsights();
+      loadHistoricalChartRange('30D');
+      loadHeatmapMatrix();
+      loadSeasonalCurves();
+      loadModelsComparisonTables();
+      loadDataExplorer();
+    });
+  </script>
+</body>
+</html>

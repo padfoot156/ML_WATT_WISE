@@ -1,0 +1,40 @@
+{
+  "hourly_national_profile": {
+    "record_count": 12984,
+    "start_timestamp": "2024-01-01 00:00:00",
+    "end_timestamp": "2025-06-24 23:00:00",
+    "metrics": {
+      "demand_mw": {
+        "mean": 194009.99,
+        "std": 20227.71,
+        "min": 97065.28,
+        "max": 248688.24,
+        "p25": 183704.86,
+        "p50": 196988.74,
+        "p75": 208060.53
+      },
+      "solar_mw": {
+        "mean": 15624.21,
+        "max": 64701.19
+      },
+      "wind_mw": {
+        "mean": 8894.01,
+        "max": 29304.95
+      },
+      "renewable_share_pct": {
+        "mean": 12.07,
+        "max": 39.12
+      }
+    }
+  },
+  "daily_maharashtra_profile": {
+    "record_count": 3954,
+    "start_date": "2013-01-01",
+    "end_date": "2024-04-27",
+    "energy_met_mu_mean": 439.52,
+    "peak_met_mw_mean": 20473.29,
+    "peak_met_mw_max": 28969.0,
+    "peak_unmet_mw_max": 2986.0,
+    "temp_c_mean": 26.64
+  }
+}

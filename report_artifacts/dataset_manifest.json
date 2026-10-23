@@ -1,0 +1,70 @@
+{
+  "project": "WattWise AI \u2014 Energy Demand, Supply, Renewable Generation & Expansion Intelligence",
+  "authors": [
+    {
+      "name": "Pranav Kolhe",
+      "class": "A8",
+      "batch": "B4",
+      "roll_no": "54"
+    },
+    {
+      "name": "Amber Shukla",
+      "class": "A8",
+      "batch": "B3",
+      "roll_no": "38"
+    }
+  ],
+  "university": "Shri Ramdeobaba University, Nagpur",
+  "datasets": [
+    {
+      "id": "primary_hourly_india_scada",
+      "title": "Electricity Demand, Solar and Wind Generation Data (September 2021- June 2025) of India at 1-hour interval",
+      "source": "Mendeley Data",
+      "doi": "10.17632/y58jknpgs8.2",
+      "url": "https://data.mendeley.com/datasets/y58jknpgs8/2",
+      "licence": "CC BY 4.0",
+      "access_date": "2026-10-24",
+      "sampling_frequency": "1-Hour (Hourly)",
+      "date_coverage": "2024-01-01 00:00:00 to 2025-06-24 23:00:00",
+      "total_observations": 12984,
+      "units": {
+        "demand_mw": "Megawatts (MW) - Average Hourly Electrical Load",
+        "solar_mw": "Megawatts (MW) - Grid-connected Solar Generation",
+        "wind_mw": "Megawatts (MW) - Grid-connected Wind Generation",
+        "total_generation_mw": "Megawatts (MW) - Aggregate Grid Generation"
+      },
+      "raw_file": "data/raw/mendeley/Jan2024_Jun2025.xlsx",
+      "raw_sha256": "482dad0c4d47a4e6ed284e41a3b1f5005c397ca149ea5bba121b111e7ed79467",
+      "processed_file": "data/processed/clean_hourly_national.csv",
+      "processed_sha256": "5a80ee4ed14ac7cde24375431b2b93570a08f4447af4a5dfcfb7cb18d359dd49"
+    },
+    {
+      "id": "supporting_daily_indian_states",
+      "title": "Daily electricity demand data for Indian states (2014-2024)",
+      "source": "Zenodo",
+      "doi": "10.5281/zenodo.14983362",
+      "url": "https://zenodo.org/records/14983362",
+      "licence": "Creative Commons Attribution 4.0 International",
+      "access_date": "2026-10-24",
+      "sampling_frequency": "Daily",
+      "date_coverage": "2013-01-01 to 2024-04-28",
+      "total_observations": 3955,
+      "coverage_entities": "39 States & Union Territories of India + All-India Total",
+      "units": {
+        "energy_met_mu": "Million Units (MU) = Gigawatt-hours (GWh)",
+        "peak_met_mw": "Megawatts (MW) - Peak Power Met during day",
+        "peak_unmet_mw": "Megawatts (MW) - Peak Deficit / Unmet Load",
+        "temperature": "Degrees Celsius (converted from Kelvin)",
+        "utci": "Universal Thermal Climate Index (Degrees Celsius)"
+      },
+      "raw_files": [
+        "data/raw/zenodo/Maharashtra.csv",
+        "data/raw/zenodo/daily_energy_met_MU.csv",
+        "data/raw/zenodo/peak_met_MW.csv",
+        "data/raw/zenodo/peak_unmet_MW.csv"
+      ],
+      "processed_file": "data/processed/clean_daily_maharashtra.csv",
+      "processed_sha256": "e85f1abe6fdb083911159a7bea386da7182b9dfe890284c7013ebd87cdc20d9b"
+    }
+  ]
+}

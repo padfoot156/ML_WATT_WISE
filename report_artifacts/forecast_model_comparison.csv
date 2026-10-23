@@ -1,0 +1,7 @@
+Model,Forecast Horizon,MAE (MW),RMSE (MW),R2,MAPE (%),Training Time (s),Test Period,Model Configuration
+Seasonal Naive (Lag-24),24-Hour Day-Ahead,6289.75,9044.06,0.5987,3.18,0.0,2025-03-01 00:00:00 to 2025-06-24 23:00:00,Persistence of lag_24
+Ridge Regression,24-Hour Day-Ahead,5294.63,7614.75,0.7155,2.68,0.014,2025-03-01 00:00:00 to 2025-06-24 23:00:00,"alpha=100.0, L2 regularization"
+Decision Tree Regressor,24-Hour Day-Ahead,6367.93,8738.12,0.6254,3.2,0.093,2025-03-01 00:00:00 to 2025-06-24 23:00:00,"max_depth=12, min_samples_split=20, min_samples_leaf=10"
+Random Forest Regressor,24-Hour Day-Ahead,5364.95,7527.91,0.722,2.7,0.932,2025-03-01 00:00:00 to 2025-06-24 23:00:00,"n_estimators=100, max_depth=16, min_samples_leaf=5"
+Gradient Boosting Regressor,24-Hour Day-Ahead,5735.89,7864.12,0.6966,2.88,7.251,2025-03-01 00:00:00 to 2025-06-24 23:00:00,"n_estimators=120, lr=0.08, max_depth=6"
+LSTM Neural Network,24-Hour Day-Ahead,6855.19,8886.44,0.6097,3.43,13.098,2025-03-02 00:00:00 to 2025-06-24 23:00:00,"2-layer LSTM(hidden=64, dropout=0.2), seq_len=24, Adam(lr=0.002)"

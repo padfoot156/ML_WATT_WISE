@@ -1,0 +1,149 @@
+[
+  {
+    "scenario": "BAU (5.5% Demand, 12% RE)",
+    "year": 2024,
+    "peak_demand_gw": 248.69,
+    "assumed_demand_growth_pct": 5.5,
+    "assumed_re_growth_pct": 12.0
+  },
+  {
+    "scenario": "BAU (5.5% Demand, 12% RE)",
+    "year": 2025,
+    "peak_demand_gw": 262.37,
+    "assumed_demand_growth_pct": 5.5,
+    "assumed_re_growth_pct": 12.0
+  },
+  {
+    "scenario": "BAU (5.5% Demand, 12% RE)",
+    "year": 2026,
+    "peak_demand_gw": 276.8,
+    "assumed_demand_growth_pct": 5.5,
+    "assumed_re_growth_pct": 12.0
+  },
+  {
+    "scenario": "BAU (5.5% Demand, 12% RE)",
+    "year": 2027,
+    "peak_demand_gw": 292.02,
+    "assumed_demand_growth_pct": 5.5,
+    "assumed_re_growth_pct": 12.0
+  },
+  {
+    "scenario": "BAU (5.5% Demand, 12% RE)",
+    "year": 2028,
+    "peak_demand_gw": 308.08,
+    "assumed_demand_growth_pct": 5.5,
+    "assumed_re_growth_pct": 12.0
+  },
+  {
+    "scenario": "BAU (5.5% Demand, 12% RE)",
+    "year": 2029,
+    "peak_demand_gw": 325.03,
+    "assumed_demand_growth_pct": 5.5,
+    "assumed_re_growth_pct": 12.0
+  },
+  {
+    "scenario": "BAU (5.5% Demand, 12% RE)",
+    "year": 2030,
+    "peak_demand_gw": 342.9,
+    "assumed_demand_growth_pct": 5.5,
+    "assumed_re_growth_pct": 12.0
+  },
+  {
+    "scenario": "Accelerated Green Transition (7.5% Demand, 22% RE)",
+    "year": 2024,
+    "peak_demand_gw": 248.69,
+    "assumed_demand_growth_pct": 7.5,
+    "assumed_re_growth_pct": 22.0
+  },
+  {
+    "scenario": "Accelerated Green Transition (7.5% Demand, 22% RE)",
+    "year": 2025,
+    "peak_demand_gw": 267.34,
+    "assumed_demand_growth_pct": 7.5,
+    "assumed_re_growth_pct": 22.0
+  },
+  {
+    "scenario": "Accelerated Green Transition (7.5% Demand, 22% RE)",
+    "year": 2026,
+    "peak_demand_gw": 287.39,
+    "assumed_demand_growth_pct": 7.5,
+    "assumed_re_growth_pct": 22.0
+  },
+  {
+    "scenario": "Accelerated Green Transition (7.5% Demand, 22% RE)",
+    "year": 2027,
+    "peak_demand_gw": 308.94,
+    "assumed_demand_growth_pct": 7.5,
+    "assumed_re_growth_pct": 22.0
+  },
+  {
+    "scenario": "Accelerated Green Transition (7.5% Demand, 22% RE)",
+    "year": 2028,
+    "peak_demand_gw": 332.12,
+    "assumed_demand_growth_pct": 7.5,
+    "assumed_re_growth_pct": 22.0
+  },
+  {
+    "scenario": "Accelerated Green Transition (7.5% Demand, 22% RE)",
+    "year": 2029,
+    "peak_demand_gw": 357.02,
+    "assumed_demand_growth_pct": 7.5,
+    "assumed_re_growth_pct": 22.0
+  },
+  {
+    "scenario": "Accelerated Green Transition (7.5% Demand, 22% RE)",
+    "year": 2030,
+    "peak_demand_gw": 383.8,
+    "assumed_demand_growth_pct": 7.5,
+    "assumed_re_growth_pct": 22.0
+  },
+  {
+    "scenario": "High Stress / Stagnant RE (8.5% Demand, 5% RE)",
+    "year": 2024,
+    "peak_demand_gw": 248.69,
+    "assumed_demand_growth_pct": 8.5,
+    "assumed_re_growth_pct": 5.0
+  },
+  {
+    "scenario": "High Stress / Stagnant RE (8.5% Demand, 5% RE)",
+    "year": 2025,
+    "peak_demand_gw": 269.83,
+    "assumed_demand_growth_pct": 8.5,
+    "assumed_re_growth_pct": 5.0
+  },
+  {
+    "scenario": "High Stress / Stagnant RE (8.5% Demand, 5% RE)",
+    "year": 2026,
+    "peak_demand_gw": 292.76,
+    "assumed_demand_growth_pct": 8.5,
+    "assumed_re_growth_pct": 5.0
+  },
+  {
+    "scenario": "High Stress / Stagnant RE (8.5% Demand, 5% RE)",
+    "year": 2027,
+    "peak_demand_gw": 317.65,
+    "assumed_demand_growth_pct": 8.5,
+    "assumed_re_growth_pct": 5.0
+  },
+  {
+    "scenario": "High Stress / Stagnant RE (8.5% Demand, 5% RE)",
+    "year": 2028,
+    "peak_demand_gw": 344.65,
+    "assumed_demand_growth_pct": 8.5,
+    "assumed_re_growth_pct": 5.0
+  },
+  {
+    "scenario": "High Stress / Stagnant RE (8.5% Demand, 5% RE)",
+    "year": 2029,
+    "peak_demand_gw": 373.94,
+    "assumed_demand_growth_pct": 8.5,
+    "assumed_re_growth_pct": 5.0
+  },
+  {
+    "scenario": "High Stress / Stagnant RE (8.5% Demand, 5% RE)",
+    "year": 2030,
+    "peak_demand_gw": 405.73,
+    "assumed_demand_growth_pct": 8.5,
+    "assumed_re_growth_pct": 5.0
+  }
+]
