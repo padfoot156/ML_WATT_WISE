@@ -19,6 +19,13 @@
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
+  <!-- Production Backend URL Configuration -->
+  <script>
+    // Configurable Production Backend URL (e.g. Render FastAPI deployment)
+    // Priority: window.WATTWISE_API_URL -> localStorage.getItem('WATTWISE_API_URL') -> '' (relative / proxy)
+    window.WATTWISE_API_URL = window.WATTWISE_API_URL || "";
+  </script>
+
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -135,8 +142,13 @@
         <span id="header-section-sub" class="text-[11px] text-energy-muted">Macro Grid Load, Clean Generation & Peak Demand Envelope</span>
       </div>
 
-      <!-- Right: Dataset Status & Academic Credentials -->
+      <!-- Right: Dataset Status, Backend Connection & Academic Credentials -->
       <div class="flex items-center space-x-3 text-xs">
+        <button onclick="openBackendModal()" id="backend-status-pill" class="flex items-center space-x-1.5 bg-graphite-elevated border border-graphite-border hover:border-energy-cyan/50 px-2.5 py-1.5 rounded text-[11px] transition-all cursor-pointer" title="Click to view or configure Backend API URL">
+          <span id="backend-status-dot" class="w-2 h-2 rounded-full bg-energy-amber animate-pulse"></span>
+          <span id="backend-status-text" class="text-energy-text font-medium">Backend: Connecting...</span>
+        </button>
+
         <div class="hidden lg:flex items-center space-x-2 bg-graphite-elevated border border-graphite-border px-2.5 py-1.5 rounded text-[11px]">
           <span class="w-2 h-2 rounded-full bg-energy-green animate-pulse"></span>
           <span class="text-energy-text font-medium">12,984 SCADA Hours</span>
@@ -749,8 +761,174 @@
     WattWise AI &bull; Shri Ramdeobaba University, Nagpur &bull; Machine Learning Laboratory Mini-Project
   </footer>
 
+  <!-- BACKEND CONFIGURATION MODAL -->
+  <div id="backend-modal" class="fixed inset-0 z-50 bg-graphite-bg/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-graphite-surface border border-graphite-border rounded-lg max-w-lg w-full p-5 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-graphite-border pb-3">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="server" class="w-4 h-4 text-energy-cyan"></i>
+          <h3 class="text-sm font-semibold text-energy-text">Backend API Configuration</h3>
+        </div>
+        <button onclick="closeBackendModal()" class="text-energy-muted hover:text-energy-text p-1">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      
+      <p class="text-xs text-energy-muted">
+        Connect WattWise AI Frontend (Vercel) to your FastAPI Backend (Render). If hosted separately, enter your Render service URL below.
+      </p>
+
+      <div class="space-y-1.5">
+        <label class="text-[11px] font-medium text-energy-text">Render Backend Base URL</label>
+        <input id="custom-api-url-input" type="url" placeholder="https://your-wattwise-app.onrender.com" class="w-full bg-graphite-elevated border border-graphite-border rounded px-3 py-2 text-xs font-mono text-energy-text focus:outline-none focus:border-energy-cyan" />
+        <span class="text-[10px] text-energy-muted block">Leave blank to use relative <code class="text-energy-cyan font-mono">/api</code> endpoints (automatic when deployed on Render or through Vercel rewrites).</span>
+      </div>
+
+      <div id="modal-status-msg" class="text-xs p-2.5 rounded bg-graphite-elevated border border-graphite-border">
+        <!-- Dynamic Connection Status -->
+      </div>
+
+      <div class="flex items-center justify-between pt-2 border-t border-graphite-border">
+        <button onclick="clearBackendUrl()" class="px-3 py-1.5 rounded text-xs text-energy-muted hover:text-energy-coral border border-graphite-border hover:border-energy-coral transition-colors">
+          Reset to Default
+        </button>
+        <div class="flex items-center space-x-2">
+          <button onclick="closeBackendModal()" class="px-3 py-1.5 rounded text-xs text-energy-muted hover:text-energy-text border border-graphite-border">
+            Cancel
+          </button>
+          <button onclick="saveBackendUrl()" class="px-4 py-1.5 rounded text-xs font-medium bg-energy-cyan text-graphite-bg hover:opacity-90 font-semibold shadow">
+            Test & Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- SCRIPT ENGINE -->
   <script>
+    // -------------------------------------------------------------
+    // Dynamic Backend API Base Resolution
+    // Priority:
+    // 1. window.WATTWISE_API_URL
+    // 2. localStorage 'WATTWISE_API_URL'
+    // 3. Fallback to '' (relative path /api/... which proxies via Vercel or Render backend)
+    // -------------------------------------------------------------
+    function getApiBase() {
+      let base = (window.WATTWISE_API_URL || localStorage.getItem('WATTWISE_API_URL') || '').trim();
+      if (base) {
+        base = base.replace(/\/+$/, '');
+        if (!base.startsWith('http://') && !base.startsWith('https://')) {
+          base = 'https://' + base;
+        }
+      }
+      return base;
+    }
+
+    function getApiUrl(endpoint) {
+      const base = getApiBase();
+      const path = endpoint.startsWith('/') ? endpoint : '/' + endpoint;
+      return base ? `${base}${path}` : path;
+    }
+
+    let isBackendHealthy = false;
+
+    async function checkBackendHealth() {
+      const pillDot = document.getElementById('backend-status-dot');
+      const pillText = document.getElementById('backend-status-text');
+      const base = getApiBase();
+      const url = getApiUrl('/health');
+
+      try {
+        const res = await fetch(url, { method: 'GET', cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.status === 'healthy') {
+            isBackendHealthy = true;
+            if (pillDot) pillDot.className = 'w-2 h-2 rounded-full bg-energy-green animate-pulse';
+            if (pillText) pillText.innerText = base ? 'Backend: Connected (Render)' : 'Backend: Connected';
+            return true;
+          }
+        }
+        throw new Error('Health check returned HTTP ' + res.status);
+      } catch (err) {
+        console.warn('Backend connection check failed:', err);
+        isBackendHealthy = false;
+        if (pillDot) pillDot.className = 'w-2 h-2 rounded-full bg-energy-amber animate-pulse';
+        if (pillText) pillText.innerText = 'Backend: Offline / Set URL';
+        return false;
+      }
+    }
+
+    function openBackendModal() {
+      const modal = document.getElementById('backend-modal');
+      const input = document.getElementById('custom-api-url-input');
+      const statusMsg = document.getElementById('modal-status-msg');
+      if (modal) {
+        modal.classList.remove('hidden');
+        if (input) input.value = localStorage.getItem('WATTWISE_API_URL') || '';
+        if (statusMsg) {
+          statusMsg.innerHTML = isBackendHealthy
+            ? '<span class="text-energy-green flex items-center gap-1.5"><i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Backend is currently responding to health checks.</span>'
+            : '<span class="text-energy-amber flex items-center gap-1.5"><i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Backend is currently unreachable. If your Render service was sleeping, it takes 30–50s to wake up.</span>';
+        }
+        lucide.createIcons();
+      }
+    }
+
+    function closeBackendModal() {
+      const modal = document.getElementById('backend-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    async function saveBackendUrl() {
+      const input = document.getElementById('custom-api-url-input');
+      const statusMsg = document.getElementById('modal-status-msg');
+      let val = (input ? input.value : '').trim();
+      if (val) {
+        val = val.replace(/\/+$/, '');
+        if (!val.startsWith('http://') && !val.startsWith('https://')) {
+          val = 'https://' + val;
+        }
+        localStorage.setItem('WATTWISE_API_URL', val);
+      } else {
+        localStorage.removeItem('WATTWISE_API_URL');
+      }
+
+      if (statusMsg) {
+        statusMsg.innerHTML = '<span class="text-energy-cyan flex items-center gap-1.5"><i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> Testing backend connection...</span>';
+        lucide.createIcons();
+      }
+
+      const healthy = await checkBackendHealth();
+      if (healthy) {
+        if (statusMsg) {
+          statusMsg.innerHTML = '<span class="text-energy-green flex items-center gap-1.5"><i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Connection verified! Saving & reloading data...</span>';
+          lucide.createIcons();
+        }
+        setTimeout(() => {
+          closeBackendModal();
+          loadOverviewKPIs();
+          loadSupportingInsights();
+          loadHistoricalChartRange('30D');
+          loadHeatmapMatrix();
+          loadSeasonalCurves();
+          loadModelsComparisonTables();
+          loadDataExplorer();
+        }, 1000);
+      } else {
+        if (statusMsg) {
+          statusMsg.innerHTML = '<span class="text-energy-coral flex items-center gap-1.5"><i data-lucide="x-circle" class="w-3.5 h-3.5"></i> Could not reach backend at specified URL. Saved for retry. (Note: Render free tier requires 30-50s cold start).</span>';
+          lucide.createIcons();
+        }
+      }
+    }
+
+    function clearBackendUrl() {
+      localStorage.removeItem('WATTWISE_API_URL');
+      const input = document.getElementById('custom-api-url-input');
+      if (input) input.value = '';
+      saveBackendUrl();
+    }
     // -------------------------------------------------------------
     // Global Chart Defaults & Styling Tokens
     // -------------------------------------------------------------
@@ -825,7 +1003,7 @@
     // -------------------------------------------------------------
     async function loadOverviewKPIs() {
       try {
-        const res = await fetch('/api/overview/kpis');
+        const res = await fetch(getApiUrl('/api/overview/kpis'));
         const d = await res.json();
         document.getElementById('kpi-demand').innerText = d.latest_demand_gw.toFixed(2) + ' GW';
         document.getElementById('kpi-demand-mw').innerText = Math.round(d.latest_demand_gw * 1000).toLocaleString();
@@ -846,7 +1024,7 @@
 
     async function loadSupportingInsights() {
       try {
-        const res = await fetch('/api/overview/insights');
+        const res = await fetch(getApiUrl('/api/overview/insights'));
         const data = await res.json();
         const container = document.getElementById('overview-insights-container');
         container.innerHTML = '';
@@ -879,7 +1057,7 @@
       loader.classList.remove('hidden');
 
       try {
-        const res = await fetch('/api/overview/historical-series?range=' + range);
+        const res = await fetch(getApiUrl('/api/overview/historical-series?range=' + range));
         const d = await res.json();
         
         const ctx = document.getElementById('overviewHistoricalChart').getContext('2d');
@@ -940,7 +1118,7 @@
 
     async function loadHeatmapMatrix() {
       try {
-        const res = await fetch('/api/overview/heatmap-matrix');
+        const res = await fetch(getApiUrl('/api/overview/heatmap-matrix'));
         const d = await res.json();
         document.getElementById('heatmap-min').innerText = `Low: ${d.min_gw} GW`;
         document.getElementById('heatmap-max').innerText = `High: ${d.max_gw} GW`;
@@ -969,7 +1147,7 @@
 
     async function loadSeasonalCurves() {
       try {
-        const res = await fetch('/api/overview/seasonal-curves');
+        const res = await fetch(getApiUrl('/api/overview/seasonal-curves'));
         const d = await res.json();
         const ctx = document.getElementById('seasonalChart').getContext('2d');
         if (charts.seasonal) charts.seasonal.destroy();
@@ -1005,7 +1183,7 @@
     // -------------------------------------------------------------
     async function initForecastTestChart() {
       try {
-        const res = await fetch('/api/forecast/test-sample?limit=168');
+        const res = await fetch(getApiUrl('/api/forecast/test-sample?limit=168'));
         const d = await res.json();
         const ctx = document.getElementById('forecastTestChart').getContext('2d');
         if (charts.forecast) charts.forecast.destroy();
@@ -1051,7 +1229,7 @@
       lucide.createIcons();
 
       try {
-        const res = await fetch('/api/predict', {
+        const res = await fetch(getApiUrl('/api/predict'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -1088,7 +1266,7 @@
     // -------------------------------------------------------------
     async function initRenewableCharts() {
       try {
-        const res = await fetch('/api/renewable/trends');
+        const res = await fetch(getApiUrl('/api/renewable/trends'));
         const d = await res.json();
 
         // Diurnal Solar vs Wind
@@ -1143,7 +1321,7 @@
     // -------------------------------------------------------------
     async function initFestivalChart() {
       try {
-        const res = await fetch('/api/festivals/impact');
+        const res = await fetch(getApiUrl('/api/festivals/impact'));
         const data = await res.json();
         
         const labels = data.festival_comparisons.map(f => f.festival);
@@ -1272,7 +1450,7 @@
       lucide.createIcons();
 
       try {
-        const res = await fetch('/api/expansion/simulate', {
+        const res = await fetch(getApiUrl('/api/expansion/simulate'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: payloadHash,
@@ -1343,7 +1521,7 @@
 
     async function initMaharashtraChart() {
       try {
-        const res = await fetch('/api/state/maharashtra/series?sample_step=14');
+        const res = await fetch(getApiUrl('/api/state/maharashtra/series?sample_step=14'));
         const d = await res.json();
         const ctx = document.getElementById('maharashtraStateChart').getContext('2d');
         if (charts.maharashtra) charts.maharashtra.destroy();
@@ -1394,7 +1572,7 @@
     // -------------------------------------------------------------
     async function loadModelsComparisonTables() {
       try {
-        const res = await fetch('/api/models/comparison');
+        const res = await fetch(getApiUrl('/api/models/comparison'));
         const data = await res.json();
 
         // Table A
@@ -1438,7 +1616,7 @@
     async function initModelLabCharts() {
       try {
         // LSTM Loss History
-        const res1 = await fetch('/api/models/lstm-loss');
+        const res1 = await fetch(getApiUrl('/api/models/lstm-loss'));
         const d1 = await res1.json();
         const ctx1 = document.getElementById('lstmLossChart').getContext('2d');
         if (charts.lstmLoss) charts.lstmLoss.destroy();
@@ -1464,7 +1642,7 @@
         });
 
         // Feature Importance
-        const res2 = await fetch('/api/models/feature-importance');
+        const res2 = await fetch(getApiUrl('/api/models/feature-importance'));
         const d2 = await res2.json();
         const ctx2 = document.getElementById('featureImportanceChart').getContext('2d');
         if (charts.featureImportance) charts.featureImportance.destroy();
@@ -1488,7 +1666,7 @@
         });
 
         // K-Means Cluster Centroids
-        const res3 = await fetch('/api/clustering/profiles');
+        const res3 = await fetch(getApiUrl('/api/clustering/profiles'));
         const d3 = await res3.json();
         const ctx3 = document.getElementById('clusterCentroidsChart').getContext('2d');
         if (charts.clusterCentroids) charts.clusterCentroids.destroy();
@@ -1529,7 +1707,7 @@
     // -------------------------------------------------------------
     async function loadDataExplorer() {
       try {
-        const res = await fetch('/api/data/explorer');
+        const res = await fetch(getApiUrl('/api/data/explorer'));
         const data = await res.json();
         const tb = document.getElementById('features-table-body');
         tb.innerHTML = '';
@@ -1554,6 +1732,7 @@
     // -------------------------------------------------------------
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
+      checkBackendHealth();
       loadOverviewKPIs();
       loadSupportingInsights();
       loadHistoricalChartRange('30D');

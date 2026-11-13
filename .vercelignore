@@ -1,0 +1,15 @@
+# Ignore Python dependencies and backend execution files for Vercel static deployment
+requirements.txt
+src/
+models/
+data/
+results/
+tests/
+Dockerfile
+docker-compose.yml
+.pytest_cache/
+report_artifacts/
+scripts/
+*.py
+*.pt
+*.joblib

@@ -36,6 +36,8 @@ from src.api.endpoints import (
     ScenarioRequest
 )
 from src.data.calendar_features import enrich_calendar_features
+from fastapi.testclient import TestClient
+from src.api.main import app
 
 def test_health_check():
     data = health_check()
@@ -60,6 +62,19 @@ def test_dashboard_html_contents():
     assert "Energy Overview" in html
     assert "Demand Forecasting" in html
     assert "Expansion Simulator" in html
+
+    # Verify static root index.html for Vercel
+    assert os.path.exists("index.html")
+    with open("index.html", "r", encoding="utf-8") as f:
+        root_html = f.read()
+    assert "WattWise AI" in root_html
+    assert "Backend API Configuration" in root_html
+
+    # Test GET / from FastAPI client
+    client = TestClient(app)
+    response = client.get("/")
+    assert response.status_code == 200
+    assert "WattWise AI" in response.text
 
 def test_hourly_dataset_frequency_and_integrity():
     csv_path = "data/processed/clean_hourly_national.csv"

@@ -23,8 +23,9 @@ origins = [origin.strip() for origin in cors_env.split(",") if origin.strip()]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins if origins else ["*"],
-    allow_credentials=True,
+    allow_origins=origins if origins != ["*"] else ["*"],
+    allow_origin_regex=r"https://.*\.vercel\.app" if "*" in origins else None,
+    allow_credentials=False if "*" in origins else True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -50,12 +51,14 @@ app.mount("/figures", StaticFiles(directory=figures_dir), name="figures")
 @app.get("/", response_class=HTMLResponse)
 def serve_dashboard():
     """Serves the WattWise AI unified interactive dashboard."""
-    html_path = os.path.join(os.path.dirname(__file__), "dashboard.html")
-    if not os.path.exists(html_path):
-        return HTMLResponse("<h1>Dashboard HTML not found</h1>", status_code=404)
-    with open(html_path, "r", encoding="utf-8") as f:
-        content = f.read()
-    return HTMLResponse(content)
+    for candidate in [
+        os.path.join(os.path.dirname(__file__), "dashboard.html"),
+        os.path.abspath("index.html"),
+    ]:
+        if os.path.exists(candidate):
+            with open(candidate, "r", encoding="utf-8") as f:
+                return HTMLResponse(f.read())
+    return HTMLResponse("<h1>Dashboard HTML not found</h1>", status_code=404)
 
 if __name__ == "__main__":
     import uvicorn
